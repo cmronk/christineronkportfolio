@@ -1,0 +1,52 @@
+---
+// Uses Netlify Forms: when the site is hosted on Netlify, submissions show up in
+// your Netlify dashboard and can be emailed to you. No backend code needed.
+// Not on Netlify? See the README for the Formspree alternative.
+---
+<form name="contact" method="POST" action="/thanks/" data-netlify="true" netlify-honeypot="bot-field" class="form">
+  <input type="hidden" name="form-name" value="contact" />
+  <!-- Honeypot: hidden from people, bots fill it in and get filtered out -->
+  <p class="hp" aria-hidden="true">
+    <label>Leave this empty <input name="bot-field" tabindex="-1" autocomplete="off" /></label>
+  </p>
+
+  <div class="row">
+    <div class="field">
+      <label for="cf-name">Name</label>
+      <input id="cf-name" name="name" type="text" required autocomplete="name" />
+    </div>
+    <div class="field">
+      <label for="cf-email">Email</label>
+      <input id="cf-email" name="email" type="email" required autocomplete="email" />
+    </div>
+  </div>
+  <div class="field">
+    <label for="cf-topic">What's this about?</label>
+    <select id="cf-topic" name="topic">
+      <option>Just saying hi</option>
+      <option>A Rock RMS project</option>
+      <option>Something I wrote</option>
+      <option>An Opportunity</option>
+    </select>
+  </div>
+  <div class="field">
+    <label for="cf-msg">Message</label>
+    <textarea id="cf-msg" name="message" rows="4" required></textarea>
+  </div>
+  <button type="submit" class="btn btn--light lift">
+    Send message
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+  </button>
+</form>
+
+<style>
+  .form { display: flex; flex-direction: column; gap: 16px; }
+  .row { display: flex; flex-wrap: wrap; gap: 16px; }
+  .row .field { flex: 1 1 180px; }
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  label { font-size: 14px; font-weight: 600; }
+  input, select, textarea { font: inherit; padding: 12px 14px; border-radius: 10px; border: 1px solid var(--sage); background: var(--cream); color: var(--ink); min-height: 44px; }
+  textarea { resize: vertical; }
+  button { align-self: flex-start; }
+  .hp { position: absolute; left: -9999px; }
+</style>

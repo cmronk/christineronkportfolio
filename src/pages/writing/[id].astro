@@ -1,0 +1,56 @@
+---
+// One page is generated for every Markdown file in src/content/articles/.
+import { render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ArticleCard from '../../components/ArticleCard.astro';
+import CardArt from '../../components/CardArt.astro';
+import { getArticles, formatDate } from '../../lib/content';
+
+export async function getStaticPaths() {
+  const articles = await getArticles();
+  return articles.map((article, index) => ({
+    params: { id: article.id },
+    props: { article, index, more: articles.filter((a) => a.id !== article.id).slice(0, 2) },
+  }));
+}
+
+const { article, index, more } = Astro.props;
+const { title, summary, date, readTime, tags } = article.data;
+const { Content } = await render(article);
+---
+<BaseLayout title={title} description={summary}>
+  <article class="section">
+    <header class="container head">
+      <div class="head-copy">
+        <a href="/writing/" class="back">← Back to writing</a>
+        <h1>{title}</h1>
+        <p class="meta">{formatDate(date)}{readTime && ` · ${readTime}`}</p>
+        {tags.length > 0 && <ul class="pill-list">{tags.map((t) => <li>{t}</li>)}</ul>}
+      </div>
+      <div class="head-art"><CardArt variant={index} /></div>
+    </header>
+    <div class="container">
+      <div class="prose"><Content /></div>
+    </div>
+  </article>
+
+  {more.length > 0 && (
+    <section class="section section--tint">
+      <div class="container">
+        <h2 class="more-title">Keep reading</h2>
+        <div class="more">{more.map((a, i) => <ArticleCard article={a} variant={i + 1} />)}</div>
+      </div>
+    </section>
+  )}
+</BaseLayout>
+
+<style>
+  .head { display: flex; flex-wrap: wrap; gap: 32px; align-items: center; margin-bottom: 48px; }
+  .head-copy { flex: 1 1 420px; min-width: 0; display: flex; flex-direction: column; gap: 16px; align-items: flex-start; max-width: 760px; }
+  .head-art :global(.card-art) { width: 200px; }
+  .back { font-size: 14px; color: var(--ink-soft); text-decoration: none; }
+  h1 { font-size: clamp(36px, 5vw, 56px); }
+  .meta { margin: 0; color: var(--ink-soft); font-size: 15px; }
+  .more-title { font-size: 32px; margin-bottom: 24px; }
+  .more { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; }
+</style>

@@ -1,0 +1,207 @@
+---
+// Abstract illustration of the Growth Track Manager: summary numbers on top,
+// then a board with a column for each step. A person shows up in every column where they're missing something.
+// Placeholder bars stand in for names and contact details, so nothing private shows.
+//
+// Try it: the colored buttons on Outstanding cards are the actions staff take.
+// Sending a link marks it "sent," but the step stays open until the PERSON completes it.
+// "Send to coach" is the one action staff finish themselves, so that card moves to Interview.
+const stages = [
+  { id: 'card', title: 'Membership Card', count: 1, cards: 1, color: '#7D9480' },
+  { id: 'app', title: 'Leadership App', count: 4, cards: 3, color: '#6F92A3' },
+  { id: 'check', title: 'Background Check', count: 3, cards: 2, color: '#A99BC9' },
+  { id: 'coach', title: 'Send to Coach', count: 2, cards: 2, color: '#E9925B' },
+  { id: 'interview', title: 'Interview', count: 0, cards: 0, color: '#D9705F' },
+  { id: 'dt', title: 'Dream Team', count: 0, cards: 0, color: '#3F5443', done: true },
+];
+const actions = {
+  card: { color: '#7D9480', label: 'Resend membership card link', toast: 'Card link sent' },
+  app: { color: '#6F92A3', label: 'Send leadership application link', toast: 'App link sent' },
+  check: { color: '#A99BC9', label: 'Send background check link', toast: 'Check link sent' },
+  coach: { color: '#E9925B', label: 'Send to coach', toast: 'Sent to coach' },
+};
+type Step = keyof typeof actions;
+// The Outstanding column: one card per person, oldest first, showing every step they're missing.
+const outstanding: Step[][] = [
+  ['app', 'check', 'coach'],
+  ['app', 'check'],
+  ['card', 'coach'],
+  ['check'],
+];
+const stats = [
+  { big: 70, label: 50 },
+  { big: 55, label: 75 },
+  { big: 45, label: 60 },
+];
+---
+<figure class="gt" data-gt aria-label="Simplified view of the Growth Track Manager: summary numbers above a board of six steps from membership card to Dream Team">
+  <div class="gt-stats">
+    {stats.map((s) => (
+      <div class="gt-stat"><i class="big" style={`width: ${s.big}%`}></i><i style={`width: ${s.label}%`}></i></div>
+    ))}
+  </div>
+  <div class="gt-board">
+    {stages.map((st, i) => (
+      <div class="gt-col" data-col={st.id} style={`--c: ${st.color}`}>
+        <div class="gt-head">
+          <span class="gt-title">{st.title}</span>
+          <span class={`gt-count ${st.done ? 'done' : ''}`} data-count>{st.count}</span>
+        </div>
+        {st.cards === 0 ? (
+          <span class="gt-empty" data-empty></span>
+        ) : (
+          Array.from({ length: st.cards }).map((_, j) => (
+            <div class="gt-card" data-card>
+              <div class="gt-row"><b style={`width: ${55 + ((i + j) % 3) * 12}%`}></b><em></em></div>
+              <i style={`width: ${60 + ((i * 2 + j) % 3) * 10}%`}></i>
+              <span class="gt-dots"><u></u><u></u><u></u></span>
+              <i class="faint" style={`width: ${70 - ((i + j) % 2) * 15}%`}></i>
+            </div>
+          ))
+        )}
+      </div>
+    ))}
+    <div class="gt-col gt-out">
+      <div class="gt-head">
+        <span class="gt-title">Outstanding</span>
+        <span class="gt-count out">{outstanding.length}</span>
+      </div>
+      {outstanding.map((needs, j) => (
+        <div class="gt-card gt-ocard">
+          <div class="gt-row"><b style={`width: ${60 + (j % 3) * 10}%`}></b><em class="link"></em></div>
+          <span class="gt-acts">
+            {needs.map((step, k) => (
+              <button type="button" class={`gt-act ${j === 0 && k === 0 ? 'hint' : ''}`} data-step={step} data-toast={actions[step].toast} style={`--a: ${actions[step].color}`} aria-label={actions[step].label} title={actions[step].label}></button>
+            ))}
+          </span>
+          <span class="gt-toast" aria-live="polite"></span>
+          <i></i>
+          <span class="gt-age"><i style={`width: ${90 - j * 18}%`}></i></span>
+        </div>
+      ))}
+    </div>
+  </div>
+  <figcaption class="gt-caption">
+    A simplified view. Each card is a person, shown in every column for a step they still need. The last column lists everyone with something outstanding, longest wait first.
+    <span class="gt-try"><strong>Try it:</strong> tap a colored button on an Outstanding card to send that step.</span>
+    <button type="button" class="gt-reset" data-reset hidden>Reset</button>
+  </figcaption>
+</figure>
+
+<style>
+  .gt { margin: 0; background: #F8F7FA; border: 2px solid var(--ink); border-radius: var(--radius); padding: 14px; display: flex; flex-direction: column; gap: 12px; }
+  .gt i, .gt b { display: block; border-radius: 3px; }
+
+  .gt-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+  .gt-stat { background: #fff; border: 1px solid #E6E4EC; border-radius: 6px; padding: 10px; display: flex; flex-direction: column; gap: 6px; }
+  .gt-stat i { height: 5px; background: #C9C7D2; }
+  .gt-stat i.big { height: 12px; background: var(--ink); opacity: .85; }
+
+  .gt-board { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)) minmax(0, 1.25fr); gap: 5px; align-items: start; }
+  .gt-col { background: #EFEEF3; border-radius: 6px; padding: 6px; display: flex; flex-direction: column; gap: 6px; min-width: 0; min-height: 150px; }
+  .gt-head { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 3px 4px; padding-bottom: 5px; border-bottom: 2px solid var(--c); }
+  .gt-title { font-size: 9px; font-weight: 700; line-height: 1.2; color: var(--ink); }
+  .gt-count { flex: none; min-width: 15px; height: 15px; border-radius: 999px; background: #9A98A6; color: #fff; font-size: 9px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+  .gt-count.done { background: var(--forest); }
+  .gt-empty { height: 6px; width: 70%; margin-top: 4px; border-radius: 3px; background: #D9D7E0; }
+
+  .gt-card { background: #fff; border: 1px solid #E2E0E8; border-radius: 5px; padding: 6px; display: flex; flex-direction: column; gap: 4px; }
+  .gt-row { display: flex; align-items: center; justify-content: space-between; gap: 4px; }
+  .gt-row b { height: 5px; background: var(--ink); opacity: .8; }
+  .gt-row em { flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--c); }
+  .gt-card i { height: 4px; background: #CFCDD8; }
+  .gt-card i.faint { background: #E3E1EA; }
+  .gt-dots { display: flex; gap: 3px; }
+  .gt-dots u { width: 6px; height: 6px; border-radius: 50%; background: var(--c); opacity: .55; }
+
+  .gt-out { background: #F6EDE6; outline: 1.5px solid var(--rust); }
+  .gt-count.out { background: var(--rust); }
+  .gt-row em.link { background: none; border: 2px solid #8A6FC9; width: 7px; height: 7px; }
+  .gt-age { display: block; height: 4px; border-radius: 3px; background: #F0E4DA; }
+  .gt-age i { height: 100%; background: var(--terracotta, #C65A3A); }
+  .gt-caption { font-size: 13px; color: var(--ink-soft); }
+  .gt-caption strong { color: var(--ink); }
+  .gt-try { display: block; margin-top: 4px; }
+  .gt-reset { margin-left: 4px; font: inherit; font-size: 13px; color: var(--rust); background: none; border: 0; padding: 0; text-decoration: underline; cursor: pointer; }
+
+  /* Action buttons on Outstanding cards */
+  .gt-ocard { position: relative; }
+  .gt-acts { display: flex; gap: 4px; }
+  .gt-act { width: 14px; height: 14px; padding: 0; border-radius: 50%; border: 2px solid var(--a); background: var(--a); cursor: pointer; position: relative; transition: transform .15s ease, background .2s ease; }
+  .gt-act:hover { transform: scale(1.2); }
+  .gt-act:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+  /* Sent: the ring stays (the step is still open), the fill clears, a check appears */
+  .gt-act.sent { background: #fff; cursor: default; transform: none; }
+  .gt-act.sent::after { content: ''; position: absolute; left: 3.5px; top: 0.5px; width: 3px; height: 6px; border: solid var(--a); border-width: 0 2px 2px 0; transform: rotate(45deg); }
+  .gt-act.hint { animation: gt-pulse 1.8s ease-in-out infinite; }
+  @keyframes gt-pulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(198, 90, 58, .55); } 50% { box-shadow: 0 0 0 5px rgba(198, 90, 58, 0); } }
+  .gt-toast { position: absolute; right: 5px; bottom: 5px; font-size: 8px; font-weight: 700; color: #fff; background: var(--forest); padding: 2px 5px; border-radius: 4px; opacity: 0; transform: translateY(4px); transition: opacity .2s ease, transform .2s ease; pointer-events: none; }
+  .gt-toast.show { opacity: 1; transform: translateY(0); }
+  .gt-card.leaving { opacity: 0; transform: scale(.9); transition: opacity .3s ease, transform .3s ease; }
+  .gt-card.arriving { animation: gt-arrive .4s ease; }
+  @keyframes gt-arrive { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
+  .gt-count.bump { animation: gt-bump .35s ease; }
+  @keyframes gt-bump { 50% { transform: scale(1.35); } }
+  @media (prefers-reduced-motion: reduce) {
+    .gt-act.hint, .gt-card.arriving, .gt-count.bump { animation: none; }
+    .gt-act, .gt-toast, .gt-card.leaving { transition: none; }
+  }
+
+  @media (max-width: 520px) {
+    .gt-board { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .gt-out { grid-column: span 3; }
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-gt]').forEach((root) => {
+    const reset = root.querySelector<HTMLButtonElement>('[data-reset]');
+    const start = root.querySelector('.gt-board')!.innerHTML;
+    const col = (id: string) => root.querySelector<HTMLElement>(`[data-col="${id}"]`)!;
+    const bump = (c: HTMLElement, by: number) => {
+      const n = c.querySelector<HTMLElement>('[data-count]')!;
+      n.textContent = String(Math.max(0, Number(n.textContent) + by));
+      n.classList.remove('bump'); void n.offsetWidth; n.classList.add('bump');
+    };
+
+    root.addEventListener('click', (e) => {
+      const target = e.target as HTMLElement;
+      if (target.closest('[data-reset]')) {
+        root.querySelector('.gt-board')!.innerHTML = start;
+        reset!.hidden = true;
+        return;
+      }
+      const btn = target.closest<HTMLButtonElement>('.gt-act');
+      if (!btn || btn.classList.contains('sent')) return;
+      root.querySelectorAll('.gt-act.hint').forEach((h) => h.classList.remove('hint'));
+      btn.classList.add('sent');
+      btn.setAttribute('aria-label', `${btn.getAttribute('aria-label')}: sent`);
+      reset!.hidden = false;
+
+      const toast = btn.closest('.gt-card')!.querySelector<HTMLElement>('.gt-toast')!;
+      toast.textContent = btn.dataset.toast!;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 1600);
+
+      // Sending a coach is the one step staff complete, so the person moves to Interview.
+      if (btn.dataset.step === 'coach') {
+        btn.style.setProperty('--a', '#D9705F');
+        const from = col('coach');
+        const card = from.querySelector<HTMLElement>('[data-card]:last-of-type');
+        const to = col('interview');
+        if (card) {
+          const copy = card.cloneNode(true) as HTMLElement;
+          card.classList.add('leaving');
+          setTimeout(() => card.remove(), 300);
+          bump(from, -1);
+          setTimeout(() => {
+            to.querySelector('[data-empty]')?.remove();
+            copy.classList.add('arriving');
+            to.appendChild(copy);
+            bump(to, 1);
+          }, 300);
+        }
+      }
+    });
+  });
+</script>

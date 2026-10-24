@@ -1,0 +1,159 @@
+---
+// Drag-to-compare slider. Pass real screenshots with beforeImage/afterImage,
+// or leave them out to show the illustrative mock screens.
+interface Props { beforeImage?: string; afterImage?: string; label?: string }
+const {
+  beforeImage,
+  afterImage,
+  label = 'Drag to compare the original staff homepage with the redesign',
+} = Astro.props;
+const id = `ba-${Math.random().toString(36).slice(2, 8)}`;
+const clutter = [90, 70, 85, 60, 95, 75, 80, 65, 90, 55, 85, 70, 75, 95, 60, 80, 70, 90, 65, 85, 75];
+---
+<div class="ba" data-ba style="--pos: 50%">
+  <div class="frame">
+    <!-- AFTER (bottom layer) -->
+    <div class="layer after">
+      {afterImage ? (
+        <img src={afterImage} alt="After: the redesigned staff homepage" />
+      ) : (
+        <div class="mock mock--after">
+          <div class="a-grid">
+            <div class="a-panel">
+              <span class="a-title">Upcoming events</span>
+              <div class="a-event"><b></b><i></i><i class="short"></i></div>
+              <div class="a-event"><b></b><i></i></div>
+              <div class="a-event"><b></b><i class="short"></i></div>
+              <div class="a-linkbar"><span></span><span></span><span></span></div>
+            </div>
+            <div class="a-panel">
+              <span class="a-title">Workspaces</span>
+              <div class="a-tiles">
+                <span style="--t: #F1F3F1; --b: #7D9480"></span>
+                <span style="--t: #EEF4F6; --b: #6F92A3"></span>
+                <span style="--t: #F4F2F8; --b: #A99BC9"></span>
+                <span style="--t: #FDF1E9; --b: #E9925B"></span>
+                <span style="--t: #FBEDEA; --b: #D9705F"></span>
+              </div>
+            </div>
+            <div class="a-panel">
+              <span class="a-title">Common actions</span>
+              <div class="a-actions"><span class="wide"></span><span></span><span></span><span></span><span></span><span></span></div>
+            </div>
+            <div class="a-panel a-vision">
+              <i class="eyebrow"></i><i class="rule"></i>
+              <i class="line"></i><i class="line"></i><i class="line short"></i>
+            </div>
+            <div class="a-panel">
+              <span class="a-title">Staff links</span>
+              <div class="a-actions"><span></span><span></span><span></span><span></span></div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+    <!-- BEFORE (top layer, clipped by the slider) -->
+    <div class="layer before">
+      {beforeImage ? (
+        <img src={beforeImage} alt="Before: the original staff homepage" />
+      ) : (
+        <div class="mock mock--before">
+          <div class="b-main">
+            <div class="b-panel b-grow">
+              <span class="b-title">Staff Updates <small>(2018)</small></span>
+              <div class="b-banner"><i></i><i></i><i></i><i class="short"></i></div>
+              <b class="b-heading"></b>
+              <i class="b-text"></i><i class="b-text"></i><i class="b-text short"></i>
+            </div>
+          </div>
+          <div class="b-side">
+            <div class="b-panel b-grow">
+              <span class="b-title">Quick Links</span>
+              <div class="b-links">{clutter.slice(0, 15).map((w) => <i style={`width: ${w}%`}></i>)}</div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+    <div class="divider" aria-hidden="true">
+      <span class="handle">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l-6 6 6 6M15 6l6 6-6 6"></path></svg>
+      </span>
+    </div>
+    <span class="tag tag--left">BEFORE</span>
+    <span class="tag tag--right">AFTER</span>
+  </div>
+  <label for={id}>{label}</label>
+  <input id={id} type="range" min="0" max="100" value="50" />
+</div>
+
+<style>
+  .frame { position: relative; width: 100%; aspect-ratio: 16 / 11; border-radius: var(--radius); overflow: hidden; border: 2px solid var(--ink); background: var(--paper); user-select: none; }
+  .layer { position: absolute; inset: 0; }
+  .layer img { width: 100%; height: 100%; object-fit: cover; object-position: top left; }
+  .before { clip-path: inset(0 calc(100% - var(--pos)) 0 0); }
+  .divider { position: absolute; top: 0; bottom: 0; left: var(--pos); width: 3px; margin-left: -1.5px; background: var(--ink); pointer-events: none; }
+  .handle { position: absolute; top: 50%; left: 50%; width: 40px; height: 40px; transform: translate(-50%, -50%); border-radius: 50%; background: var(--cream); border: 2px solid var(--ink); display: flex; align-items: center; justify-content: center; color: var(--ink); }
+  .tag { position: absolute; bottom: 10px; font-size: 11px; font-weight: 600; letter-spacing: .12em; background: var(--ink); color: var(--cream); padding: 3px 8px; border-radius: 4px; }
+  .tag--left { left: 12px; }
+  .tag--right { right: 12px; }
+  label { display: block; margin: 14px 0 4px; font-size: 14px; color: var(--ink-soft); }
+  input[type='range'] { width: 100%; accent-color: var(--rust); height: 44px; margin: 0; }
+
+  /* ---------- Abstract mock screens (used when no screenshots are given) ---------- */
+  .mock { height: 100%; padding: 4% 4%; display: flex; flex-direction: column; gap: 3%; font-family: var(--font-body); }
+  .mock i, .mock b { display: block; border-radius: 3px; }
+
+  /* BEFORE: the original page */
+  .mock--before { background: #ECEAE6; flex-direction: row; gap: 3%; }
+  .b-main { flex: 2.4; display: flex; flex-direction: column; min-width: 0; }
+  .b-side { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+  .b-panel { background: #fff; border: 1px solid #D9D6D0; border-radius: 4px; padding: 5%; display: flex; flex-direction: column; gap: 8px; }
+  .b-grow { flex: 1; }
+  .b-title { font-size: 10px; font-weight: 700; color: #333; }
+  .b-title small { font-weight: 400; color: #888; }
+  .b-banner { aspect-ratio: 5 / 2; background: #354A39; border-radius: 3px; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 6px; }
+  .b-banner i { width: 52%; height: 5px; background: #C9D3C6; opacity: .75; }
+  .b-banner i.short { width: 30%; }
+  .b-heading { width: 34%; height: 9px; background: #2A2118; margin-top: 4px; }
+  .b-text { width: 96%; height: 5px; background: #B9B6AF; }
+  .b-text.short { width: 70%; }
+  .b-links { display: flex; flex-direction: column; }
+  .b-links i { height: 4px; background: #A7B6C6; margin: 5px 0; position: relative; }
+  .b-links i::after { content: ''; position: absolute; left: 0; right: -100%; bottom: -5px; height: 1px; background: #ECEAE6; }
+
+  /* AFTER: the redesign */
+  .mock--after { background: #F8F7FA; }
+  .a-grid { flex: 1; display: grid; grid-template-columns: 1fr 1fr 0.85fr; grid-template-rows: 1.25fr 1fr; gap: 2.5%; min-height: 0; }
+  .a-panel { background: #fff; border: 1px solid #E6E4EC; border-radius: 6px; padding: 4% 5%; display: flex; flex-direction: column; gap: 6px; min-width: 0; min-height: 0; overflow: hidden; }
+  .a-title { font-size: 10px; font-weight: 700; color: var(--ink); }
+  .a-event { display: flex; flex-direction: column; gap: 4px; padding-bottom: 5px; border-bottom: 1px solid #EEEDF2; }
+  .a-event b { width: 50%; height: 5px; background: #4B6584; }
+  .a-event i { width: 90%; height: 4px; background: #D3D1DB; }
+  .a-event i.short { width: 60%; }
+  .a-linkbar { margin-top: auto; align-self: center; display: flex; gap: 6px; border: 1px solid #E6E4EC; border-radius: 4px; padding: 5px 8px; }
+  .a-linkbar span { width: 26px; height: 5px; border-radius: 3px; background: #5D5B66; }
+  .a-tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+  .a-tiles span { aspect-ratio: 1; background: var(--t); border-bottom: 3px solid var(--b); border-radius: 4px; position: relative; }
+  .a-tiles span::after { content: ''; position: absolute; top: 28%; left: 50%; width: 30%; aspect-ratio: 1; transform: translateX(-50%); border-radius: 50%; border: 2px solid var(--b); }
+  .a-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 5px; }
+  .a-actions span { height: 20px; background: #F2F2F4; border: 1px solid #E6E4EC; border-radius: 4px; position: relative; }
+  .a-actions span::after { content: ''; position: absolute; top: 50%; left: 50%; width: 8px; height: 8px; transform: translate(-50%, -50%); border-radius: 50%; border: 2px solid #9A98A6; }
+  .a-actions span.wide { grid-column: span 2; }
+  .a-vision { grid-column: span 2; align-items: center; justify-content: center; gap: 7px; }
+  .a-vision .eyebrow { width: 22%; height: 4px; background: #7A7884; }
+  .a-vision .rule { width: 6%; height: 2px; background: #3F5443; margin-bottom: 4px; }
+  .a-vision .line { width: 70%; height: 7px; background: #4A5A44; opacity: .8; }
+  .a-vision .line.short { width: 40%; }
+</style>
+
+<script>
+  // Wire up every slider on the page.
+  document.querySelectorAll<HTMLElement>('[data-ba]').forEach((el) => {
+    const input = el.querySelector<HTMLInputElement>('input[type="range"]');
+    if (!input) return;
+    const update = () => el.style.setProperty('--pos', `${input.value}%`);
+    input.addEventListener('input', update);
+    update();
+  });
+</script>

@@ -1,0 +1,89 @@
+---
+// One page is generated for every Markdown file in src/content/case-studies/.
+// Like a Rock content channel item detail page.
+import { render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import BeforeAfter from '../../components/BeforeAfter.astro';
+import GrowthTrackArt from '../../components/GrowthTrackArt.astro';
+import DevotionalArt from '../../components/DevotionalArt.astro';
+import ConnectionsArt from '../../components/ConnectionsArt.astro';
+import Star from '../../components/Star.astro';
+import { getCaseStudies } from '../../lib/content';
+
+export async function getStaticPaths() {
+  const studies = await getCaseStudies();
+  return studies.map((study) => ({ params: { id: study.id }, props: { study } }));
+}
+
+const { study } = Astro.props;
+const { title, summary, tools, problem, approach, decisions, result, quote, beforeImage, afterImage, illustration, featured } = study.data;
+const { Content } = await render(study);
+const overview = [
+  { label: 'The Problem', text: problem },
+  { label: 'The Approach', text: approach },
+  { label: 'Key Decisions', text: decisions },
+  { label: 'The Result', text: result },
+];
+---
+<BaseLayout title={title} description={summary}>
+  <article>
+    <header class="section container head">
+      <div class="head-copy">
+        <a href="/work/" class="back">← Back to work</a>
+        <h1>{title}</h1>
+        <ul class="pill-list">{tools.map((t) => <li>{t}</li>)}</ul>
+        <p class="muted lede">{summary}</p>
+      </div>
+      {illustration === 'growth-track' ? (
+        <div class="head-visual"><GrowthTrackArt /></div>
+      ) : illustration === 'connections' ? (
+        <div class="head-visual"><ConnectionsArt /></div>
+      ) : illustration === 'devotional' ? (
+        <div class="head-visual"><DevotionalArt /></div>
+      ) : (beforeImage || afterImage || featured) && (
+        <div class="head-visual"><BeforeAfter beforeImage={beforeImage} afterImage={afterImage} /></div>
+      )}
+    </header>
+
+    <section class="section--border">
+      <div class="container overview">
+        {overview.map((o) => (
+          <div>
+            <Star size={22} color="var(--ink)" />
+            <h2>{o.label}</h2>
+            <p>{o.text}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="section section--tint">
+      <div class="container body">
+        <div class="prose"><Content /></div>
+        {quote && (
+          <aside class="quote">
+            <p>“{quote}”</p>
+            <Star size={30} color="var(--terracotta)" twinkle />
+          </aside>
+        )}
+      </div>
+    </section>
+  </article>
+</BaseLayout>
+
+<style>
+  .head { display: flex; flex-wrap: wrap; gap: 40px; align-items: center; }
+  .head-copy { flex: 1 1 400px; min-width: 0; display: flex; flex-direction: column; gap: 18px; align-items: flex-start; }
+  .head-visual { flex: 1 1 400px; min-width: 0; }
+  .back { font-size: 14px; color: var(--ink-soft); text-decoration: none; }
+  h1 { font-size: clamp(38px, 5vw, 60px); }
+  .lede { margin: 0; font-size: 18px; }
+  .overview { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 32px; padding-top: 48px; padding-bottom: 48px; }
+  .overview h2 { font-size: 20px; margin: 10px 0 8px; }
+  .overview p { margin: 0; font-size: 15px; color: var(--ink-soft); }
+  .body { display: flex; flex-wrap: wrap; gap: 48px; align-items: flex-start; }
+  .prose { flex: 2 1 480px; min-width: 0; }
+  .quote { flex: 1 1 260px; background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius); padding: 28px; position: sticky; top: 24px; }
+  .quote p { margin: 0 0 12px; font-family: var(--font-display); font-style: italic; font-size: 22px; line-height: 1.4; }
+  @media (max-width: 800px) { .quote { position: static; } }
+</style>

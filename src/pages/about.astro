@@ -1,0 +1,44 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import HeroArt from '../components/HeroArt.astro';
+---
+<BaseLayout title="About" description="Systems thinker. Problem solver. Technology human.">
+  <section class="section container intro">
+    <div class="copy">
+      <p class="eyebrow">About</p>
+      <h1>Systems thinker. Problem solver. Technology human.</h1>
+      <p class="lede">I'm a technologist with a background in systems, data, and integrations. I care about building solutions that are reliable, useful, and designed with people in mind.</p>
+    </div>
+    <div class="art"><HeroArt /></div>
+  </section>
+
+  <section class="section section--tint">
+    <div class="container prose">
+      <h2>My journey</h2>
+      <p>[Your story. A few short paragraphs: the software startup where you worked as an implementation specialist fitting ERP software to business needs, the coding bootcamp, and your work as a Product Engineer at Trinity Fellowship Church on Rock RMS.]</p>
+      <p>[What ties it together: helping organizations get real value from the software they already have.]</p>
+
+      <h2>Small wins</h2>
+      <p>[Two or three short "problem, fix, result" stories from across departments. These show range and that people come to you.]</p>
+      <ul>
+        <li><strong>[Department]:</strong> [What was broken] → [What you did] → [What changed]</li>
+        <li><strong>[Department]:</strong> [What was broken] → [What you did] → [What changed]</li>
+      </ul>
+
+      <h2>Outside of work</h2>
+      <p>Mom of three. Marathon finisher. [One more thing that's you.]</p>
+
+      <p><a href="/resume.pdf">Download my resume (PDF)</a></p>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .intro { display: flex; flex-wrap: wrap; gap: 48px; align-items: center; }
+  .copy { flex: 1 1 420px; min-width: 0; }
+  .copy .eyebrow { margin-bottom: 16px; }
+  h1 { font-size: clamp(38px, 5vw, 60px); margin-bottom: 24px; }
+  .lede { font-size: 19px; color: var(--ink-soft); margin: 0; max-width: 560px; }
+  .art { flex: 1 1 340px; min-width: 0; display: flex; justify-content: center; }
+  .art :global(.hero-art) { max-width: 420px; }
+</style>

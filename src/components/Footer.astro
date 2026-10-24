@@ -1,0 +1,33 @@
+---
+import Star from './Star.astro';
+const year = new Date().getFullYear();
+---
+<footer class="site-footer">
+  <div class="container inner">
+    <div class="brand">
+      <Star size={28} />
+      <span>CHRISTINE RONK</span>
+    </div>
+    <p class="tagline">
+      <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12,22 L12,10" stroke="var(--olive)" stroke-width="1.8" stroke-linecap="round"></path>
+        <path d="M12,14 C7,9 3,10 3,13 C7,16 10,16 12,14 Z" fill="var(--sage)" stroke="var(--olive)" stroke-width="1.2"></path>
+        <path d="M12,11 C17,6 21,7 21,10 C17,13 14,13 12,11 Z" fill="var(--sage)" stroke="var(--olive)" stroke-width="1.2"></path>
+      </svg>
+      Better systems. Brighter futures.
+    </p>
+    <a href="/#contact" aria-label="Contact" class="icon">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="M3 7l9 6 9-6"></path></svg>
+    </a>
+  </div>
+  <p class="container credit">© {year} Christine Ronk</p>
+</footer>
+
+<style>
+  .site-footer { border-top: 1px solid var(--line); padding: 32px 0 24px; }
+  .inner { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 20px; }
+  .brand { display: flex; align-items: center; gap: 12px; font-size: 13px; font-weight: 600; letter-spacing: 0.18em; }
+  .tagline { margin: 0; display: flex; align-items: center; gap: 8px; font-family: var(--font-display); font-style: italic; color: var(--ink-soft); }
+  .icon { display: inline-flex; width: 44px; height: 44px; align-items: center; justify-content: center; color: var(--ink); }
+  .credit { margin: 16px auto 0; font-size: 13px; color: var(--ink-soft); }
+</style>

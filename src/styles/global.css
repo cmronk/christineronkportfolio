@@ -1,0 +1,122 @@
+/* ---------- Design tokens ---------- */
+:root {
+  --cream: #F7EBDB;
+  --cream-deep: #F0DFC6;
+  --paper: #FFF8EE;
+  --line: #E3D3BC;
+  --line-strong: #D8C3A5;
+  --ink: #2A2118;
+  --ink-soft: #4A3F33;
+  --olive: #56684F;
+  --olive-text: #4A5A44;
+  --forest: #3F5443;
+  --sage: #A9BFA4;
+  --mustard: #D4A23A;
+  --terracotta: #C65A3A;
+  --terracotta-soft: #D9714F;
+  --rust: #A8432A; /* buttons and links: passes contrast with cream text */
+  --rust-dark: #7E2F1C;
+
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+
+  --radius: 14px;
+  --max: 1240px;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--cream);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+img { max-width: 100%; height: auto; display: block; }
+
+a { color: var(--rust); }
+a:hover { color: var(--rust-dark); }
+
+:focus-visible { outline: 3px solid var(--mustard); outline-offset: 2px; }
+
+h1, h2, h3 { font-family: var(--font-display); line-height: 1.15; margin: 0; }
+
+.container { max-width: var(--max); margin: 0 auto; padding: 0 32px; }
+@media (max-width: 600px) { .container { padding: 0 20px; } }
+
+.section { padding-top: 72px; padding-bottom: 72px; }
+.section--tint { background: var(--cream-deep); }
+.section--border { border-top: 1px solid var(--line); }
+
+.eyebrow {
+  margin: 0 0 8px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--olive-text);
+}
+
+.section-title { font-size: clamp(34px, 4vw, 48px); line-height: 1.1; }
+
+.section-head {
+  display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between;
+  gap: 16px 48px; margin-bottom: 40px;
+}
+.section-head p { margin: 0; max-width: 420px; color: var(--ink-soft); }
+
+.muted { color: var(--ink-soft); }
+
+.btn {
+  display: inline-flex; align-items: center; gap: 10px;
+  background: var(--rust); color: #FFF8EE; text-decoration: none;
+  padding: 14px 26px; border-radius: 999px; font-weight: 600; font: inherit; font-weight: 600;
+  border: none; cursor: pointer; min-height: 44px;
+}
+.btn:hover { background: var(--rust-dark); color: #FFF8EE; }
+.btn--light { background: var(--cream); color: var(--ink); }
+.btn--light:hover { background: var(--paper); color: var(--ink); }
+
+.text-link { font-weight: 600; }
+
+.pill-list { margin: 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 8px; font-size: 14px; }
+.pill-list li { background: var(--paper); border: 1px solid var(--line-strong); padding: 4px 12px; border-radius: 999px; }
+
+/* ---------- Motion ---------- */
+@keyframes twinkle { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: .55; transform: scale(.82); } }
+@keyframes orbit { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+@keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+
+.twinkle { transform-box: fill-box; transform-origin: center; animation: twinkle 3.6s ease-in-out infinite; }
+.twinkle.d2 { animation-delay: 1.2s; }
+.twinkle.d3 { animation-delay: 2.4s; }
+.orbit { transform-origin: 270px 270px; animation: orbit 40s linear infinite; }
+.bob { animation: bob 6s ease-in-out infinite; }
+
+.lift { transition: transform .25s ease, box-shadow .25s ease; }
+.lift:hover { transform: translateY(-4px); box-shadow: 0 12px 24px rgba(42, 33, 24, .14); }
+
+@media (prefers-reduced-motion: reduce) {
+  .twinkle, .orbit, .bob { animation: none; }
+  .lift { transition: none; }
+  .lift:hover { transform: none; }
+}
+
+/* ---------- Long-form reading (articles and case studies) ---------- */
+.prose { max-width: 68ch; font-size: 18px; line-height: 1.75; }
+.prose h2 { font-size: 30px; margin: 48px 0 16px; }
+.prose h3 { font-size: 23px; margin: 36px 0 12px; }
+.prose p, .prose ul, .prose ol { margin: 0 0 22px; }
+.prose li { margin-bottom: 8px; }
+.prose blockquote {
+  margin: 32px 0; padding: 4px 0 4px 24px; border-left: 3px solid var(--mustard);
+  font-family: var(--font-display); font-style: italic; font-size: 22px; color: var(--ink);
+}
+.prose code { background: var(--paper); border: 1px solid var(--line); padding: 1px 6px; border-radius: 6px; font-size: .88em; }
+.prose pre { background: var(--ink); color: var(--cream); padding: 20px; border-radius: 12px; overflow-x: auto; font-size: 15px; }
+.prose pre code { background: none; border: none; padding: 0; color: inherit; }
+.prose img { border-radius: 12px; margin: 32px 0; }
+.prose a { font-weight: 500; }

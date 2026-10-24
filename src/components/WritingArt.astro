@@ -1,0 +1,145 @@
+---
+// Writing page illustration: a retro computer on a little planet,
+// with a ring around it, a star traveling the ring, and floating starbursts.
+//
+// The viewBox is the drawing's coordinate system: 400 wide, 260 tall.
+// (0,0) is the top-left corner. x grows to the right, y grows DOWN.
+//
+// The ring is one ellipse: center (200,140), 160 wide radius, 66 tall radius,
+// tilted -10 degrees. Its two ends are at (42.4,167.8) and (357.6,112.2).
+// It's drawn in two halves so it can pass behind and in front of the computer.
+//
+// Motion (all CSS, in the <style> block below):
+//   - .float        starbursts drift up and down
+//   - .twinkle      sparkles pulse (shared class from global.css)
+//   - .orbiter      a small star travels the ring, hiding behind the computer
+//   - .bob          the computer gently rises and settles
+// Everything stops for visitors with "reduce motion" turned on.
+---
+<svg viewBox="0 0 400 260" class="writing-art" aria-hidden="true">
+
+  <!-- 1. Backdrop planet -->
+  <circle cx="200" cy="140" r="96" fill="#C65A3A"></circle>
+
+  <!-- 2. Back half of the ring (behind the computer) -->
+  <path d="M42.4,167.8 A160,66 -10 0 1 357.6,112.2" fill="none" stroke="#56684F" stroke-width="4" stroke-linecap="round"></path>
+
+  <!-- 3. Traveling star, back copy (visible only on the back half of the ring) -->
+  <path class="orbiter" d="M0,-40 L5,-5 L40,0 L5,5 L0,40 L-5,5 L-40,0 L-5,-5 Z" transform="scale(0.36)" fill="#D4A23A" stroke="#2A2118" stroke-width="4" stroke-linejoin="round"></path>
+
+  <!-- 4. A front-facing retro computer, grouped so it bobs as one piece.
+       It's drawn at 2x size inside, then scaled to half and moved into place. -->
+  <g class="bob">
+    <g transform="translate(100,38) scale(0.5)">
+      <!-- Monitor case, with a darker strip for the side -->
+      <rect x="70" y="20" width="260" height="210" rx="18" fill="#EADBC0"></rect>
+      <path d="M310,24 h2 a16,16 0 0 1 16,16 v170 a16,16 0 0 1 -16,16 h-2 z" fill="#C9B793"></path>
+      <rect x="70" y="20" width="260" height="210" rx="18" fill="none" stroke="#2A2118" stroke-width="5"></rect>
+      <!-- Screen bezel and screen -->
+      <rect x="96" y="44" width="208" height="136" rx="14" fill="#C9B793" stroke="#2A2118" stroke-width="4"></rect>
+      <rect x="108" y="56" width="184" height="112" rx="10" fill="#2F3B33" stroke="#2A2118" stroke-width="4"></rect>
+      <path d="M120,72 q6,-8 20,-8" fill="none" stroke="#A9BFA4" stroke-width="5" stroke-linecap="round" opacity="0.6"></path>
+      <!-- Lines of "writing" on the screen, with a gold cursor -->
+      <g fill="#A9BFA4">
+        <rect x="124" y="86" width="132" height="8" rx="4"></rect>
+        <rect x="124" y="104" width="150" height="8" rx="4" opacity="0.7"></rect>
+        <rect x="124" y="122" width="116" height="8" rx="4" opacity="0.7"></rect>
+        <rect x="124" y="140" width="70" height="8" rx="4" opacity="0.7"></rect>
+      </g>
+      <rect x="200" y="137" width="10" height="14" fill="#D4A23A"></rect>
+      <!-- Front panel: knobs, power light, floppy slot -->
+      <rect x="200" y="194" width="96" height="12" rx="3" fill="#2A2118"></rect>
+      <rect x="206" y="198" width="40" height="4" rx="2" fill="#C9B793"></rect>
+      <circle cx="112" cy="200" r="7" fill="#C65A3A" stroke="#2A2118" stroke-width="3"></circle>
+      <circle cx="134" cy="200" r="7" fill="#D4A23A" stroke="#2A2118" stroke-width="3"></circle>
+      <circle cx="160" cy="200" r="4" fill="#56684F"></circle>
+      <!-- Stand -->
+      <path d="M160,230 L240,230 L252,252 L148,252 Z" fill="#C9B793" stroke="#2A2118" stroke-width="5" stroke-linejoin="round"></path>
+      <!-- Keyboard -->
+      <path d="M60,262 L340,262 L356,316 L44,316 Z" fill="#EADBC0" stroke="#2A2118" stroke-width="5" stroke-linejoin="round"></path>
+      <g fill="#C9B793" stroke="#2A2118" stroke-width="2">
+        <rect x="76" y="270" width="18" height="10" rx="2"></rect><rect x="98" y="270" width="18" height="10" rx="2"></rect><rect x="120" y="270" width="18" height="10" rx="2"></rect><rect x="142" y="270" width="18" height="10" rx="2"></rect><rect x="164" y="270" width="18" height="10" rx="2"></rect><rect x="186" y="270" width="18" height="10" rx="2"></rect><rect x="208" y="270" width="18" height="10" rx="2"></rect><rect x="230" y="270" width="18" height="10" rx="2"></rect><rect x="252" y="270" width="18" height="10" rx="2"></rect><rect x="274" y="270" width="18" height="10" rx="2"></rect><rect x="296" y="270" width="28" height="10" rx="2" fill="#C65A3A"></rect>
+        <rect x="70" y="284" width="26" height="10" rx="2"></rect><rect x="100" y="284" width="18" height="10" rx="2"></rect><rect x="122" y="284" width="18" height="10" rx="2"></rect><rect x="144" y="284" width="18" height="10" rx="2"></rect><rect x="166" y="284" width="18" height="10" rx="2"></rect><rect x="188" y="284" width="18" height="10" rx="2"></rect><rect x="210" y="284" width="18" height="10" rx="2"></rect><rect x="232" y="284" width="18" height="10" rx="2"></rect><rect x="254" y="284" width="18" height="10" rx="2"></rect><rect x="276" y="284" width="18" height="10" rx="2"></rect><rect x="298" y="284" width="32" height="10" rx="2" fill="#D4A23A"></rect>
+        <rect x="66" y="298" width="34" height="10" rx="2"></rect><rect x="104" y="298" width="190" height="10" rx="2"></rect><rect x="298" y="298" width="36" height="10" rx="2"></rect>
+      </g>
+    </g>
+  </g>
+
+  <!-- 5. Front half of the ring (in front of the computer) -->
+  <path d="M357.6,112.2 A160,66 -10 0 1 42.4,167.8" fill="none" stroke="#56684F" stroke-width="4" stroke-linecap="round"></path>
+
+  <!-- 6. Traveling star, front copy (visible only on the front half) -->
+  <path class="orbiter orbiter--front" d="M0,-40 L5,-5 L40,0 L5,5 L0,40 L-5,5 L-40,0 L-5,-5 Z" transform="scale(0.36)" fill="#D4A23A" stroke="#2A2118" stroke-width="4" stroke-linejoin="round"></path>
+
+  <!-- 7. Floating starbursts. The animation goes on the outer <g>,
+          the position on the inner <path>, so they don't fight. -->
+  <g class="float">
+    <path d="M0,-40 L6,-14 L28,-28 L14,-6 L40,0 L14,6 L28,28 L6,14 L0,40 L-6,14 L-28,28 L-14,6 L-40,0 L-14,-6 L-28,-28 L-6,-14 Z" transform="translate(112,52) scale(0.4)" fill="#E9DCC6" stroke="#2A2118" stroke-width="4" stroke-linejoin="round"></path>
+  </g>
+  <g class="float d2">
+    <path d="M0,-40 L6,-14 L28,-28 L14,-6 L40,0 L14,6 L28,28 L6,14 L0,40 L-6,14 L-28,28 L-14,6 L-40,0 L-14,-6 L-28,-28 L-6,-14 Z" transform="translate(292,40) scale(0.3)" fill="#A9BFA4" stroke="#2A2118" stroke-width="5" stroke-linejoin="round"></path>
+  </g>
+
+  <!-- 8. Twinkling sparkles -->
+  <g transform="translate(346,58) scale(0.42)"><path class="twinkle" d="M0,-40 L5,-5 L40,0 L5,5 L0,40 L-5,5 L-40,0 L-5,-5 Z" fill="#D4A23A"></path></g>
+  <g transform="translate(60,100) scale(0.25)"><path class="twinkle d2" d="M0,-40 L5,-5 L40,0 L5,5 L0,40 L-5,5 L-40,0 L-5,-5 Z" fill="#C65A3A"></path></g>
+  <g transform="translate(200,24) scale(0.18)"><path class="twinkle d3" d="M0,-40 L5,-5 L40,0 L5,5 L0,40 L-5,5 L-40,0 L-5,-5 Z" fill="#56684F"></path></g>
+</svg>
+
+<style>
+  .writing-art { width: 100%; max-width: 420px; height: auto; overflow: visible; }
+
+  /* ---------- Floating starbursts ---------- */
+  @keyframes float {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50%      { transform: translateY(-8px) rotate(10deg); }
+  }
+  .float {
+    transform-box: fill-box;      /* pivot around the shape itself... */
+    transform-origin: center;     /* ...not the corner of the whole drawing */
+    animation: float 6s ease-in-out infinite;
+  }
+  .float.d2 { animation-duration: 7.5s; animation-delay: -2s; }
+
+  /* ---------- Computer bob ---------- */
+  @keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-4px); }
+  }
+  .bob { animation: bob 6s ease-in-out infinite; }
+
+  /* ---------- Star traveling the ring ----------
+     offset-path is the track: the same ellipse as the ring,
+     first the FRONT half (right end, down and around to the left end),
+     then the BACK half (left end, up and over, back to the right).
+     offset-distance moves the star from 0% to 100% along it. */
+  .orbiter {
+    offset-path: path('M357.6,112.2 A160,66 -10 0 1 42.4,167.8 A160,66 -10 0 1 357.6,112.2');
+    offset-rotate: 0deg;          /* keep the star upright as it travels */
+    animation: orbit-track 18s linear infinite, orbit-back 18s linear infinite;
+  }
+  .orbiter--front { animation: orbit-track 18s linear infinite, orbit-front 18s linear infinite; }
+
+  @keyframes orbit-track {
+    from { offset-distance: 0%; }
+    to   { offset-distance: 100%; }
+  }
+  /* Behind-the-computer copy: only shows on the back half (50% to 100%) */
+  @keyframes orbit-back {
+    0%, 49.9%   { opacity: 0; }
+    50%, 100%   { opacity: 1; }
+  }
+  /* In-front copy: only shows on the front half (0% to 50%) */
+  @keyframes orbit-front {
+    0%, 49.9%   { opacity: 1; }
+    50%, 100%   { opacity: 0; }
+  }
+
+  /* ---------- Respect reduced motion ---------- */
+  @media (prefers-reduced-motion: reduce) {
+    .float, .bob { animation: none; }
+    /* Park the star on the front of the ring instead of moving it */
+    .orbiter { animation: none; offset-distance: 10%; opacity: 0; }
+    .orbiter--front { opacity: 1; }
+  }
+</style>

@@ -1,0 +1,98 @@
+---
+// Abstract illustration of the devotional engagement dashboard: filters, top studies,
+// a month-to-month started vs. completed chart, KPI tiles by format,
+// and the individual drilldown cards. Placeholder bars stand in for names and numbers.
+const top = [92, 80, 72, 66, 60, 54];
+const kpis = [
+  { bg: '#DCEBEA', fg: '#3F7D7A' },
+  { bg: '#DCEBEA', fg: '#3F7D7A' },
+  { bg: '#F7E3D2', fg: '#D9773A' },
+  { bg: '#DCE7F5', fg: '#4A86D9' },
+  { bg: '#F8DCDA', fg: '#D9534A' },
+];
+const drill = [
+  { pct: 100, chips: [1] },
+  { pct: 35, chips: [1, 1] },
+  { pct: 12, chips: [1, 1, 1] },
+];
+---
+<figure class="jr" aria-label="Simplified view of the devotional engagement dashboard: filters, top studies, a started versus completed chart, summary numbers by format, and drilldown cards">
+  <div class="jr-filter"><span class="jr-select"></span><span class="jr-select"></span><span class="jr-btn"></span></div>
+
+  <div class="jr-row">
+    <div class="jr-panel jr-top">
+      <span class="jr-title">Top studies</span>
+      {top.map((w) => <div class="jr-line"><i style={`width: ${w}%`}></i><b></b></div>)}
+    </div>
+    <div class="jr-panel jr-chart">
+      <span class="jr-title">Started vs. completed, by month</span>
+      <svg viewBox="0 0 300 110" preserveAspectRatio="none" aria-hidden="true">
+        <g stroke="#ECEAF0" stroke-width="1">
+          <line x1="0" y1="20" x2="300" y2="20" /><line x1="0" y1="50" x2="300" y2="50" /><line x1="0" y1="80" x2="300" y2="80" />
+        </g>
+        <path d="M0,78 C20,82 35,92 55,90 C75,88 70,10 82,10 C95,10 100,60 115,70 C130,78 140,72 150,72 C170,72 175,52 190,52 C205,52 210,80 230,84 C250,88 260,86 275,80 C290,76 295,84 300,86" fill="none" stroke="#EBC28D" stroke-width="2.5" />
+        <path d="M0,96 C20,98 40,100 60,99 C75,98 75,74 85,74 C98,74 100,92 120,94 C140,96 170,95 190,94 C210,93 230,99 260,97 C280,96 290,98 300,98" fill="none" stroke="#D9773A" stroke-width="2.5" />
+        <path d="M0,98 C30,100 60,100 85,94 C100,90 110,99 140,99 C170,99 180,92 195,92 C210,92 230,100 300,100" fill="none" stroke="#4A86D9" stroke-width="2" />
+      </svg>
+    </div>
+  </div>
+
+  <div class="jr-kpis">
+    {kpis.map((k) => (
+      <div class="jr-kpi"><span class="jr-ico" style={`background: ${k.bg}; --fg: ${k.fg}`}></span><div><b></b><i></i></div></div>
+    ))}
+  </div>
+
+  <div class="jr-drill">
+    {drill.map((d) => (
+      <div class="jr-card">
+        <b class="jr-name"></b>
+        <span class="jr-bar"><span style={`width: ${d.pct}%`}></span></span>
+        <i></i>
+        <span class="jr-chips">{d.chips.map(() => <u></u>)}</span>
+      </div>
+    ))}
+  </div>
+  <figcaption class="jr-caption">A simplified view. Trends at the top, then drill down to each study and the people taking it.</figcaption>
+</figure>
+
+<style>
+  .jr { margin: 0; background: #F8F7FA; border: 2px solid var(--ink); border-radius: var(--radius); padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+  .jr i, .jr b { display: block; border-radius: 3px; }
+  .jr-title { font-size: 9px; font-weight: 700; color: var(--ink); }
+  .jr-panel { background: #fff; border: 1px solid #E6E4EC; border-radius: 6px; padding: 8px; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+
+  .jr-filter { display: flex; gap: 6px; align-items: center; }
+  .jr-select { width: 56px; height: 14px; border: 1px solid #DAD8E0; border-radius: 4px; background: #fff; }
+  .jr-btn { width: 34px; height: 14px; border-radius: 4px; background: #56684F; }
+
+  .jr-row { display: grid; grid-template-columns: 1fr 2fr; gap: 8px; }
+  .jr-line { display: flex; align-items: center; justify-content: space-between; gap: 6px; padding-bottom: 4px; border-bottom: 1px solid #F0EFF3; }
+  .jr-line i { height: 4px; background: #CFCDD8; }
+  .jr-line b { flex: none; width: 10px; height: 5px; background: var(--ink); opacity: .75; }
+  .jr-chart svg { width: 100%; height: 100%; min-height: 80px; }
+
+  .jr-kpis { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; }
+  .jr-kpi { background: #fff; border: 1px solid #E6E4EC; border-radius: 5px; display: flex; align-items: stretch; overflow: hidden; }
+  .jr-ico { flex: none; width: 22px; position: relative; }
+  .jr-ico::after { content: ''; position: absolute; top: 50%; left: 50%; width: 9px; height: 9px; transform: translate(-50%, -50%); border-radius: 50%; background: var(--fg); }
+  .jr-kpi div { flex: 1; padding: 6px; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+  .jr-kpi b { width: 60%; height: 8px; background: var(--ink); opacity: .85; }
+  .jr-kpi i { width: 85%; height: 4px; background: #CFCDD8; }
+
+  .jr-drill { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+  .jr-card { background: #fff; border: 1px solid #E6E4EC; border-radius: 6px; padding: 8px; display: flex; flex-direction: column; gap: 5px; }
+  .jr-name { width: 70%; height: 6px; background: var(--ink); opacity: .85; }
+  .jr-bar { height: 7px; border-radius: 4px; background: #EFEEF3; overflow: hidden; }
+  .jr-bar span { display: block; height: 100%; background: #6F7A6A; }
+  .jr-card i { width: 50%; height: 4px; background: #CFCDD8; }
+  .jr-chips { display: flex; gap: 4px; }
+  .jr-chips u { width: 22px; height: 8px; border-radius: 3px; background: #EFEEF3; border: 1px solid #DAD8E0; }
+
+  .jr-caption { font-size: 13px; color: var(--ink-soft); }
+
+  @media (max-width: 520px) {
+    .jr-row { grid-template-columns: 1fr; }
+    .jr-kpis { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  }
+</style>

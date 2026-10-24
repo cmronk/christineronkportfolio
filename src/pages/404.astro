@@ -1,0 +1,18 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Star from '../components/Star.astro';
+---
+<BaseLayout title="Page not found">
+  <section class="section container wrap">
+    <Star size={56} color="var(--terracotta)" twinkle />
+    <h1>Lost in space.</h1>
+    <p class="muted">That page drifted out of orbit. Let's get you back on course.</p>
+    <a href="/" class="btn">Back home</a>
+  </section>
+</BaseLayout>
+
+<style>
+  .wrap { display: flex; flex-direction: column; align-items: flex-start; gap: 20px; min-height: 50vh; justify-content: center; }
+  h1 { font-size: clamp(36px, 5vw, 56px); }
+  .muted { margin: 0; font-size: 18px; }
+</style>

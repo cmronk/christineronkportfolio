@@ -1,0 +1,8 @@
+---
+// The four-point sparkle used throughout the site.
+interface Props { size?: number; color?: string; twinkle?: boolean; class?: string }
+const { size = 28, color = 'var(--terracotta)', twinkle = false, class: className = '' } = Astro.props;
+---
+<svg width={size} height={size} viewBox="-40 -40 80 80" aria-hidden="true" class={className}>
+  <path class={twinkle ? 'twinkle' : undefined} d="M0,-40 L5,-5 L40,0 L5,5 L0,40 L-5,5 L-40,0 L-5,-5 Z" fill={color}></path>
+</svg>

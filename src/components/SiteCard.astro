@@ -1,0 +1,47 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import CardArt from './CardArt.astro';
+
+interface Props { site: CollectionEntry<'sites'>; variant?: number }
+const { site, variant = 0 } = Astro.props;
+const { title, year, role, summary, tools, status, image, link, draft } = site.data;
+const isArchive = link?.includes('web.archive.org');
+---
+<article class="site lift">
+  <div class="shot">
+    {image ? (
+      <img src={image} alt={`Screenshot of the ${title} website`} loading="lazy" />
+    ) : (
+      <div class="placeholder"><CardArt variant={variant} /></div>
+    )}
+  </div>
+  <div class="body">
+    <p class="eyebrow small">
+      {draft && <span class="draft">Draft · </span>}{year} · {status}
+    </p>
+    <h3>{title}</h3>
+    <p class="role">{role}</p>
+    <p class="muted">{summary}</p>
+    {tools.length > 0 && <ul class="pill-list">{tools.map((t) => <li>{t}</li>)}</ul>}
+    {link && (
+      <a class="text-link" href={link} target="_blank" rel="noopener">
+        {isArchive ? 'View archived version' : 'Visit site'} ↗
+      </a>
+    )}
+  </div>
+</article>
+
+<style>
+  .site { background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; display: flex; flex-direction: column; }
+  .shot { aspect-ratio: 16 / 10; background: var(--cream-deep); border-bottom: 1px solid var(--line); overflow: hidden; }
+  .shot img { width: 100%; height: 100%; object-fit: cover; object-position: top center; }
+  .placeholder { height: 100%; display: flex; align-items: center; justify-content: center; }
+  .placeholder :global(.card-art) { width: 110px; }
+  .body { padding: 20px 22px 24px; display: flex; flex-direction: column; gap: 8px; align-items: flex-start; }
+  .small { margin: 0; font-size: 12px; letter-spacing: 0.16em; }
+  .draft { color: var(--rust); }
+  h3 { font-size: 24px; }
+  .role { margin: 0; font-size: 14px; font-weight: 600; color: var(--olive-text); }
+  .muted { margin: 0; font-size: 15px; }
+  .text-link { font-size: 15px; margin-top: 4px; }
+</style>

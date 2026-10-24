@@ -1,0 +1,30 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props { study: CollectionEntry<'caseStudies'> }
+const { study } = Astro.props;
+const { title, summary, category, tools, draft } = study.data;
+const colors: Record<string, string> = {
+  'Systems & Integrations': 'var(--sage)',
+  'Data & Reporting': 'var(--mustard)',
+  'Development': 'var(--terracotta-soft)',
+};
+---
+<article class="card lift" style={`--accent: ${colors[category]}`} data-category={category}>
+  <p class="eyebrow small">{draft && <span class="draft">Draft · </span>}{category}</p>
+  <h3><a href={`/work/${study.id}/`}>{title}</a></h3>
+  <p class="muted">{summary}</p>
+  <ul class="pill-list">
+    {tools.map((t) => <li>{t}</li>)}
+  </ul>
+</article>
+
+<style>
+  .card { position: relative; background: var(--paper); border: 1px solid var(--line); border-top: 8px solid var(--accent); border-radius: var(--radius); padding: 28px; display: flex; flex-direction: column; gap: 12px; }
+  .small { margin: 0; font-size: 12px; letter-spacing: 0.16em; }
+  .draft { color: var(--rust); }
+  h3 { font-size: 26px; }
+  h3 a { color: var(--ink); text-decoration: none; }
+  h3 a::after { content: ''; position: absolute; inset: 0; border-radius: var(--radius); }
+  .muted { margin: 0; font-size: 15px; }
+</style>

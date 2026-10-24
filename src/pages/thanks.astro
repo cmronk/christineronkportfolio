@@ -1,0 +1,18 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Star from '../components/Star.astro';
+---
+<BaseLayout title="Thanks">
+  <section class="section container wrap">
+    <Star size={56} color="var(--mustard)" twinkle />
+    <h1>Thanks, message received.</h1>
+    <p class="muted">I'll get back to you within a few days.</p>
+    <a href="/" class="btn">Back home</a>
+  </section>
+</BaseLayout>
+
+<style>
+  .wrap { display: flex; flex-direction: column; align-items: flex-start; gap: 20px; min-height: 50vh; justify-content: center; }
+  h1 { font-size: clamp(36px, 5vw, 56px); }
+  .muted { margin: 0; font-size: 18px; }
+</style>

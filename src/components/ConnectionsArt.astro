@@ -1,0 +1,200 @@
+---
+// Abstract illustration of the Connections Dashboard, following the real layout:
+// campus filter, days to first activity by campus (color coded), connection state gauge,
+// new leads this year vs. last year by campus, connector stats colored by response time,
+// and the color guide. Placeholder bars stand in for campus names, people, and numbers.
+const status = { green: '#5E9E6E', yellow: '#D4A23A', red: '#D9705F', gray: '#B9B7C2' };
+// Animation: a day counter runs from Day 1 to Day 7. Each row counts days since its last
+// first contact (0 to 3 green, 4 to 6 yellow, 7+ red). `contacts` lists the days a first
+// contact gets logged, which snaps that row back to green. The colors below are the
+// final state on Day 7, which is also what shows without JavaScript or with reduced motion.
+type S = keyof typeof status;
+const campusDays: { s: S; contacts: number[] }[] = [
+  { s: 'red', contacts: [] },
+  { s: 'yellow', contacts: [2] },
+  { s: 'yellow', contacts: [3] },
+  { s: 'green', contacts: [5] },
+  { s: 'green', contacts: [2, 4, 6] },
+];
+const connectors: { s: S; work: number; contacts?: number[] }[] = [
+  { s: 'green', work: 10, contacts: [5] },
+  { s: 'red', work: 0, contacts: [] },
+  { s: 'yellow', work: 43, contacts: [3] },
+  { s: 'green', work: 6, contacts: [2, 5] },
+  { s: 'gray', work: 100 },
+];
+// Campus colors are consistent across every report, so the stacks reuse them.
+const campusColors = ['#6F92A3', '#D4A23A', '#8A6FC9', '#56684F', '#C65A3A', '#3B4A8C'];
+const lastYear = [48, 11, 7, 16, 2, 13];
+const thisYear = [31, 10, 5, 10, 2, 14];
+const guide = [
+  { s: 'green', label: '0-3 days' },
+  { s: 'yellow', label: '4-6 days' },
+  { s: 'red', label: '7+ days' },
+  { s: 'gray', label: 'Not enough data' },
+] as const;
+---
+<figure class="cn" aria-label="Simplified view of the Connections Dashboard: a campus filter, days to first contact by campus, a connection state gauge, new leads compared to last year, connector stats color coded by response time, and a color guide">
+  <div class="cn-top">
+    <div class="cn-pills">{campusColors.map((_, i) => <span class={i === 0 ? 'on' : ''}></span>)}</div>
+    <span class="cn-day" data-day aria-hidden="true">Day 7</span>
+  </div>
+
+  <div class="cn-row">
+    <div class="cn-panel">
+      <span class="cn-title">Days to first contact, by campus</span>
+      {campusDays.map((c, i) => (
+        <div class="cn-item" data-row data-contacts={c.contacts.join(',')} style={`--s: ${status[c.s]}`}><u></u><div><b style={`width: ${50 + (i % 3) * 12}%`}></b><i></i></div></div>
+      ))}
+    </div>
+    <div class="cn-panel">
+      <span class="cn-title">Connection state</span>
+      <svg class="cn-gauge" viewBox="0 0 120 66" aria-hidden="true">
+        <path d="M10,60 A50,50 0 0 1 110,60" fill="none" stroke="#ECEAF0" stroke-width="12" />
+        <path d="M10,60 A50,50 0 0 1 110,60" fill="none" stroke="#1F3557" stroke-width="12" pathLength="100" stroke-dasharray="54 100" />
+        <path d="M10,60 A50,50 0 0 1 110,60" fill="none" stroke="#A9A8B0" stroke-width="12" pathLength="100" stroke-dasharray="0 54 13 100" />
+        <path d="M10,60 A50,50 0 0 1 110,60" fill="none" stroke="#D3D2D8" stroke-width="12" pathLength="100" stroke-dasharray="0 67 24 100" />
+      </svg>
+      <div class="cn-legend"><i style="width: 70%"></i><i style="width: 55%"></i><i style="width: 60%"></i></div>
+    </div>
+  </div>
+
+  <div class="cn-row">
+    <div class="cn-panel">
+      <span class="cn-title">New leads, this year vs. last</span>
+      <div class="cn-stacks">
+        {[lastYear, thisYear].map((stack) => (
+          <div class="cn-stack">
+            {stack.map((v, i) => <span style={`flex: ${v}; background: ${campusColors[i]}`}></span>)}
+            <span style={`flex: ${100 - stack.reduce((a, b) => a + b, 0)}; background: transparent`}></span>
+          </div>
+        ))}
+      </div>
+    </div>
+    <div class="cn-panel">
+      <span class="cn-title">Connector stats</span>
+      {connectors.map((c, i) => (
+        <div class="cn-conn" data-row={c.contacts ? '' : undefined} data-contacts={c.contacts?.join(',')} style={`--s: ${status[c.s]}`}>
+          <b style={`width: ${40 + (i % 3) * 10}%`}></b>
+          <span class="cn-work"><span style={`width: ${c.work}%`}></span></span>
+        </div>
+      ))}
+    </div>
+  </div>
+
+  <div class="cn-guide">
+    {guide.map((g) => <span style={`--s: ${status[g.s]}`}>{g.label}</span>)}
+  </div>
+  <figcaption class="cn-caption">
+    A simplified view. Every campus and every connector is color coded by how quickly new people hear from us. Watch the days pass: rows turn yellow, then red, until someone logs a first contact.
+    <button type="button" class="cn-replay" data-replay hidden>Replay</button>
+  </figcaption>
+</figure>
+
+<style>
+  .cn { margin: 0; background: #F8F7FA; border: 2px solid var(--ink); border-radius: var(--radius); padding: 14px; display: flex; flex-direction: column; gap: 9px; }
+  .cn i, .cn b { display: block; border-radius: 3px; }
+  .cn-title { font-size: 9px; font-weight: 700; color: var(--ink); line-height: 1.2; }
+  .cn-panel { background: #fff; border: 1px solid #E6E4EC; border-radius: 6px; padding: 8px; display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+
+  .cn-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .cn-day { flex: none; font-size: 10px; font-weight: 700; color: #fff; background: var(--ink); border-radius: 999px; padding: 2px 9px; font-variant-numeric: tabular-nums; }
+  .cn-pills { display: flex; flex-wrap: wrap; gap: 4px; }
+  .cn-pills span { width: 38px; height: 12px; border: 1px solid #56684F; border-radius: 3px; background: #fff; }
+  .cn-pills span.on { background: #56684F; }
+
+  .cn-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+
+  .cn-item { display: flex; align-items: center; gap: 6px; border: 1px solid var(--s); border-radius: 4px; padding: 4px 6px; }
+  .cn-item u { flex: none; width: 9px; height: 9px; border-radius: 2px; background: var(--s); }
+  .cn-item div { flex: 1; display: flex; flex-direction: column; gap: 3px; }
+  .cn-item b { height: 5px; background: var(--ink); opacity: .8; }
+  .cn-item i { width: 25%; height: 3px; background: #CFCDD8; }
+
+  .cn-gauge { width: 100%; max-width: 150px; align-self: center; margin-top: 6px; }
+  .cn-legend { display: flex; flex-direction: column; align-items: center; gap: 4px; margin-top: 4px; }
+  .cn-legend i { height: 4px; background: #CFCDD8; max-width: 120px; }
+
+  .cn-stacks { flex: 1; min-height: 92px; display: flex; align-items: stretch; justify-content: center; gap: 18px; border-bottom: 1px solid #E6E4EC; padding-top: 2px; }
+  .cn-stack { width: 34px; display: flex; flex-direction: column-reverse; }
+  .cn-stack span:first-child { border-radius: 0; }
+
+  .cn-conn { display: flex; align-items: center; justify-content: space-between; gap: 6px; border: 1px solid var(--s); border-radius: 4px; padding: 5px 6px; }
+  .cn-conn b { height: 5px; background: var(--s); }
+  .cn-work { flex: none; width: 36px; height: 5px; border-radius: 3px; background: #EFEEF3; overflow: hidden; }
+  .cn-work span { display: block; height: 100%; background: var(--s); }
+
+  .cn-guide { display: flex; flex-wrap: wrap; gap: 5px; }
+  .cn-guide span { font-size: 9px; font-weight: 600; color: var(--ink); border: 1px solid var(--s); border-left: 5px solid var(--s); border-radius: 4px; padding: 2px 6px; background: #fff; }
+
+  .cn-caption { font-size: 13px; color: var(--ink-soft); }
+  .cn-replay { margin-left: 4px; font: inherit; font-size: 13px; color: var(--rust); background: none; border: 0; padding: 0; text-decoration: underline; cursor: pointer; }
+
+  /* Color changes ease in; a first contact gives the row a quick green pulse */
+  .cn-item, .cn-conn { transition: border-color .45s ease; }
+  .cn-item u, .cn-conn b, .cn-work span { transition: background-color .45s ease, width .45s ease; }
+  .cn-ping { animation: cn-ping .7s ease; }
+  @keyframes cn-ping { 0% { box-shadow: 0 0 0 0 rgba(94, 158, 110, .6); } 100% { box-shadow: 0 0 0 7px rgba(94, 158, 110, 0); } }
+  @media (prefers-reduced-motion: reduce) {
+    .cn-item, .cn-conn, .cn-item u, .cn-conn b, .cn-work span { transition: none; }
+    .cn-ping { animation: none; }
+  }
+
+  @media (max-width: 520px) {
+    .cn-row { grid-template-columns: 1fr; }
+  }
+</style>
+
+<script>
+  const COLORS = { green: '#5E9E6E', yellow: '#D4A23A', red: '#D9705F' };
+  const colorFor = (days: number) => (days >= 7 ? COLORS.red : days >= 4 ? COLORS.yellow : COLORS.green);
+  const LAST_DAY = 7;
+  const STEP_MS = 750;
+
+  document.querySelectorAll<HTMLElement>('figure.cn').forEach((fig) => {
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduce) return; // keep the finished Day 7 view
+
+    const dayEl = fig.querySelector<HTMLElement>('[data-day]')!;
+    const replay = fig.querySelector<HTMLButtonElement>('[data-replay]')!;
+    const rows = [...fig.querySelectorAll<HTMLElement>('[data-row]')].map((el) => ({
+      el,
+      contacts: (el.dataset.contacts || '').split(',').filter(Boolean).map(Number),
+      work: el.querySelector<HTMLElement>('.cn-work span'),
+      workEnd: el.querySelector<HTMLElement>('.cn-work span')?.style.width,
+    }));
+    let timer: number | undefined;
+
+    const show = (day: number) => {
+      dayEl.textContent = `Day ${day}`;
+      rows.forEach((r) => {
+        const last = Math.max(0, ...r.contacts.filter((c) => c <= day));
+        const waiting = day - last;
+        r.el.style.setProperty('--s', colorFor(waiting));
+        if (r.work) r.work.style.width = day === LAST_DAY ? r.workEnd! : `${Math.min(100, waiting * 14)}%`;
+        if (r.contacts.includes(day)) {
+          r.el.classList.remove('cn-ping'); void r.el.offsetWidth; r.el.classList.add('cn-ping');
+        }
+      });
+    };
+
+    const play = () => {
+      window.clearInterval(timer);
+      replay.hidden = true;
+      let day = 1;
+      show(day);
+      timer = window.setInterval(() => {
+        day += 1;
+        show(day);
+        if (day >= LAST_DAY) { window.clearInterval(timer); replay.hidden = false; }
+      }, STEP_MS);
+    };
+
+    show(1); // start at Day 1, all green, until it scrolls into view
+    replay.addEventListener('click', play);
+    const io = new IntersectionObserver((entries) => {
+      if (entries.some((e) => e.isIntersecting)) { io.disconnect(); setTimeout(play, 400); }
+    }, { threshold: 0.4 });
+    io.observe(fig);
+  });
+</script>

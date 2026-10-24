@@ -1,0 +1,33 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ArticleCard from '../../components/ArticleCard.astro';
+import WritingArt from '../../components/WritingArt.astro';
+import { getArticles } from '../../lib/content';
+
+const articles = await getArticles();
+---
+<BaseLayout title="Writing" description="Essays on technology, history, and the people who use it.">
+  <section class="section">
+    <div class="container">
+      <header class="head">
+        <div class="head-copy">
+          <p class="eyebrow">Writing</p>
+          <h1 class="section-title">Thinking about tech</h1>
+          <p class="muted intro">Essays on technology, history, and what it means to use it well.</p>
+        </div>
+        <div class="head-art"><WritingArt /></div>
+      </header>
+      <div class="list">
+        {articles.map((a, i) => <ArticleCard article={a} variant={i} />)}
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 24px 48px; margin-bottom: 40px; }
+  .head-copy { flex: 1 1 360px; min-width: 0; }
+  .head-art { flex: 0 1 420px; min-width: 0; display: flex; justify-content: center; }
+  .intro { margin: 12px 0 0; font-size: 18px; }
+  .list { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; }
+</style>

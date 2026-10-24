@@ -1,0 +1,64 @@
+---
+// Placeholder hero illustration. Swap for your final artwork:
+// put the image in /public/images/ and replace this component's SVG with
+// <img src="/images/hero.webp" alt="" width="560" height="520" />
+---
+<svg viewBox="0 0 520 480" class="hero-art" aria-hidden="true">
+  <circle cx="250" cy="190" r="160" fill="#C65A3A"></circle>
+  <path d="M150,300 C130,200 250,150 350,170 C450,190 490,280 440,380 C390,470 250,470 190,420 C160,395 158,340 150,300 Z" fill="#56684F"></path>
+  <circle cx="420" cy="380" r="70" fill="#D4A23A" opacity="0.9"></circle>
+  <ellipse cx="270" cy="270" rx="250" ry="70" fill="none" stroke="#D4A23A" stroke-width="3" transform="rotate(-18 270 270)"></ellipse>
+  <!-- Small cream moon with two craters that orbits the computer -->
+  <g class="orbit">
+    <circle cx="88" cy="168" r="20" fill="#E9DCC6" stroke="#2A2118" stroke-width="2.5"></circle>
+    <circle cx="81" cy="162" r="4" fill="#C9B793"></circle>
+    <circle cx="95" cy="174" r="3" fill="#C9B793"></circle>
+  </g>
+  <g class="bob">
+    <path d="M200,190 L380,180 L392,330 L212,342 Z" fill="#B9A585"></path>
+    <path d="M188,178 L370,168 L382,320 L200,332 Z" fill="#EADBC0" stroke="#2A2118" stroke-width="3" stroke-linejoin="round"></path>
+    <path d="M212,200 L350,193 L358,296 L220,303 Z" fill="#2F3B33" stroke="#2A2118" stroke-width="3" stroke-linejoin="round"></path>
+    <circle cx="285" cy="248" r="26" fill="#A9BFA4"></circle>
+    <ellipse cx="285" cy="248" rx="44" ry="10" fill="none" stroke="#D4A23A" stroke-width="3" transform="rotate(-12 285 248)"></ellipse>
+    <circle class="twinkle d2" cx="236" cy="216" r="2" fill="#F7EBDB"></circle>
+    <circle class="twinkle d3" cx="336" cy="282" r="2" fill="#F7EBDB"></circle>
+    <path d="M170,350 L400,336 L430,392 L160,410 Z" fill="#EADBC0" stroke="#2A2118" stroke-width="3" stroke-linejoin="round"></path>
+    <path d="M190,362 L392,350 M186,374 L400,361 M182,386 L408,372" stroke="#8C7A5E" stroke-width="5" stroke-dasharray="10 5"></path>
+  </g>
+  <!-- Desk plant: a mid-century planter on hairpin legs.
+       Leaves are drawn first so the pot sits in front of their stems.
+       The .sway group gently rocks the leaves around the top of the pot. -->
+  <g class="plant">
+    <g class="sway">
+      <g transform="translate(134,364) rotate(-62) scale(1.05)"><path d="M0,0 C-14,-10 -14,-34 0,-46 C14,-34 14,-10 0,0 Z" fill="#A9BFA4" stroke="#2A2118" stroke-width="1.6"></path><path d="M0,-6 L0,-38" stroke="#56684F" stroke-width="2"></path></g>
+      <g transform="translate(134,364) rotate(-32) scale(1.5)"><path d="M0,0 C-14,-10 -14,-34 0,-46 C14,-34 14,-10 0,0 Z" fill="#56684F" stroke="#2A2118" stroke-width="1.6"></path><path d="M0,-6 L0,-38" stroke="#A9BFA4" stroke-width="2"></path></g>
+      <g transform="translate(134,364) rotate(0) scale(1.85)"><path d="M0,0 C-14,-10 -14,-34 0,-46 C14,-34 14,-10 0,0 Z" fill="#7D9480" stroke="#2A2118" stroke-width="1.6"></path><path d="M0,-6 L0,-38" stroke="#2F3B33" stroke-width="2"></path></g>
+      <g transform="translate(134,364) rotate(30) scale(1.45)"><path d="M0,0 C-14,-10 -14,-34 0,-46 C14,-34 14,-10 0,0 Z" fill="#56684F" stroke="#2A2118" stroke-width="1.6"></path><path d="M0,-6 L0,-38" stroke="#A9BFA4" stroke-width="2"></path></g>
+      <g transform="translate(134,364) rotate(60) scale(1.0)"><path d="M0,0 C-14,-10 -14,-34 0,-46 C14,-34 14,-10 0,0 Z" fill="#A9BFA4" stroke="#2A2118" stroke-width="1.6"></path><path d="M0,-6 L0,-38" stroke="#56684F" stroke-width="2"></path></g>
+    </g>
+    <path d="M118,428 L114,446 M150,428 L154,446 M134,428 L134,446" stroke="#2A2118" stroke-width="3" stroke-linecap="round"></path>
+    <path d="M110,362 L158,362 L150,430 L118,430 Z" fill="#D4A23A" stroke="#2A2118" stroke-width="3" stroke-linejoin="round"></path>
+    <path d="M113,378 L155,378" stroke="#A8432A" stroke-width="3"></path>
+  </g>
+  <g transform="translate(430,60) scale(1.3)"><path class="twinkle" d="M0,-40 L5,-5 L40,0 L5,5 L0,40 L-5,5 L-40,0 L-5,-5 Z" fill="#D4A23A"></path></g>
+  <g transform="translate(70,410) scale(0.7)"><path class="twinkle d2" d="M0,-40 L5,-5 L40,0 L5,5 L0,40 L-5,5 L-40,0 L-5,-5 Z" fill="#C65A3A"></path></g>
+  <g transform="translate(330,120) scale(0.25)"><path class="twinkle d3" d="M0,-40 L5,-5 L40,0 L5,5 L0,40 L-5,5 L-40,0 L-5,-5 Z" fill="#F7EBDB"></path></g>
+</svg>
+
+<style>
+  /* overflow: visible lets the orbiting moon pass slightly below the drawing's edge
+     without being clipped at the bottom of its loop */
+  .hero-art { width: 100%; max-width: 560px; height: auto; overflow: visible; }
+
+  /* Leaves rock gently from the top of the pot */
+  @keyframes sway {
+    0%, 100% { transform: rotate(-2.5deg); }
+    50%      { transform: rotate(2.5deg); }
+  }
+  .sway {
+    transform-box: view-box;          /* measure in the drawing's coordinates... */
+    transform-origin: 134px 364px;    /* ...and pivot at the top of the pot */
+    animation: sway 7s ease-in-out infinite;
+  }
+  @media (prefers-reduced-motion: reduce) { .sway { animation: none; } }
+</style>

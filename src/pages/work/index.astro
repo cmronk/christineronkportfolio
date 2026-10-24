@@ -1,0 +1,84 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import CaseStudyCard from '../../components/CaseStudyCard.astro';
+import SiteCard from '../../components/SiteCard.astro';
+import { getCaseStudies, getSites } from '../../lib/content';
+
+const studies = await getCaseStudies();
+const sites = await getSites();
+const categories = ['All', 'Systems & Integrations', 'Data & Reporting', 'Development'];
+---
+<BaseLayout title="Work" description="Case studies in systems, data, and development.">
+  <section class="section">
+    <div class="container">
+      <p class="eyebrow">Work</p>
+      <h1 class="section-title">Case studies</h1>
+      <p class="muted intro">Problems I've solved, how I approached them, and what changed.</p>
+
+      <div class="filters" role="group" aria-label="Filter by category">
+        {categories.map((c, i) => (
+          <button type="button" data-filter={c} aria-pressed={i === 0 ? 'true' : 'false'}>{c}</button>
+        ))}
+      </div>
+
+      <div class="grid" data-grid>
+        {studies.map((s) => <CaseStudyCard study={s} />)}
+      </div>
+      <p class="empty muted" data-empty hidden>Nothing in this category yet. More coming soon.</p>
+    </div>
+  </section>
+
+  {sites.length > 0 && (
+    <section class="section section--tint">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Websites</p>
+            <h2 class="section-title">Selected sites</h2>
+          </div>
+          <p>Sites I've designed and built for organizations and businesses. Most have since been redesigned, so these show them as they were when I built them.</p>
+        </div>
+        <div class="grid">
+          {sites.map((s, i) => <SiteCard site={s} variant={i} />)}
+        </div>
+      </div>
+    </section>
+  )}
+</BaseLayout>
+
+<style>
+  .intro { margin: 12px 0 32px; font-size: 18px; }
+  .filters { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 32px; }
+  .filters button { font: inherit; font-size: 15px; padding: 10px 18px; min-height: 44px; border-radius: 999px; border: 1px solid var(--line-strong); background: var(--paper); color: var(--ink); cursor: pointer; }
+  .filters button[aria-pressed='true'] { background: var(--ink); color: var(--cream); border-color: var(--ink); }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; }
+</style>
+
+<script>
+  const buttons = document.querySelectorAll<HTMLButtonElement>('[data-filter]');
+  const cards = document.querySelectorAll<HTMLElement>('[data-grid] [data-category]');
+  const empty = document.querySelector<HTMLElement>('[data-empty]');
+
+  function apply(filter: string) {
+    let shown = 0;
+    cards.forEach((card) => {
+      const match = filter === 'All' || card.dataset.category === filter;
+      card.hidden = !match;
+      if (match) shown++;
+    });
+    buttons.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.filter === filter)));
+    if (empty) empty.hidden = shown > 0;
+  }
+
+  buttons.forEach((b) => b.addEventListener('click', () => {
+    const filter = b.dataset.filter ?? 'All';
+    apply(filter);
+    const url = new URL(location.href);
+    if (filter === 'All') url.searchParams.delete('category'); else url.searchParams.set('category', filter);
+    history.replaceState(null, '', url);
+  }));
+
+  // Supports links like /work/?category=Development from the homepage
+  const initial = new URLSearchParams(location.search).get('category');
+  if (initial) apply(initial);
+</script>
