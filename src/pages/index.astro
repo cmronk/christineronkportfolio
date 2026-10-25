@@ -148,8 +148,7 @@ const categories = [
   .featured-copy h2 { font-size: clamp(30px, 3.4vw, 42px); }
   .featured-copy .muted { margin: 0; }
 
-  .article-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; }
-
+  .article-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 360px)); gap: 24px; }
   .about { display: flex; flex-wrap: wrap; gap: 32px 64px; align-items: center; }
   .about > div { flex: 1 1 320px; min-width: 0; }
   .about h2 { font-size: clamp(30px, 3.4vw, 42px); line-height: 1.2; }

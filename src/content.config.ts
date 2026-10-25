@@ -13,6 +13,8 @@ const articles = defineCollection({
     summary: z.string(),
     readTime: z.string().optional(), // e.g. "5 min read"
     tags: z.array(z.string()).default([]),
+    // Card illustration. Add new motifs in src/components/ArticleArt.astro, then list them here.
+    art: z.enum(['planet', 'clock', 'lightbulb', 'books', 'gears', 'sprout']).default('planet'),
     featured: z.boolean().default(false), // shows as "Latest essay" style highlight
     draft: z.boolean().default(false), // drafts show in `npm run dev` but not in the live site
   }),

@@ -1,0 +1,112 @@
+---
+// Square illustration for articles. Pick a motif per article with `art:` in its Markdown.
+// `variant` picks the color palette, so neighboring cards look different.
+// The motif list lives in src/content.config.ts (the `art` field on articles).
+interface Props { art?: string; variant?: number; class?: string }
+const { art = 'planet', variant = 0, class: className } = Astro.props;
+
+const INK = '#2A2118';
+const LIGHT = '#F7EBDB';
+const SAGE = '#A9BFA4';
+const palettes = [
+  { bg: '#C65A3A', main: '#D4A23A', accent: '#56684F' },
+  { bg: '#56684F', main: '#D4A23A', accent: '#C65A3A' },
+  { bg: '#2F3B33', main: '#C65A3A', accent: '#D4A23A' },
+  { bg: '#D4A23A', main: '#56684F', accent: '#C65A3A' },
+];
+const p = palettes[variant % palettes.length];
+const star = 'M0,-40 L5,-5 L40,0 L5,5 L0,40 L-5,5 L-40,0 L-5,-5 Z';
+
+// Gear outline with square-ish teeth
+function gear(cx: number, cy: number, teeth: number, rOut: number, rIn: number) {
+  const pts: string[] = [];
+  const step = (Math.PI * 2) / teeth;
+  for (let t = 0; t < teeth; t++) {
+    const a = t * step;
+    [[a - step * 0.22, rIn], [a - step * 0.14, rOut], [a + step * 0.14, rOut], [a + step * 0.22, rIn]].forEach(([ang, r]) => {
+      pts.push(`${(cx + Math.cos(ang) * r).toFixed(1)},${(cy + Math.sin(ang) * r).toFixed(1)}`);
+    });
+  }
+  return `M${pts.join(' L')} Z`;
+}
+const clockTicks = Array.from({ length: 12 }, (_, i) => (i * Math.PI) / 6);
+---
+<svg viewBox="0 0 160 160" class:list={['article-art', className]} aria-hidden="true">
+  <rect width="160" height="160" fill={p.bg}></rect>
+
+  {art === 'planet' && (
+    <g>
+      <path d="M0,128 C45,116 110,138 160,120 L160,160 L0,160 Z" fill={p.accent}></path>
+      <circle cx="80" cy="70" r="30" fill={p.main} stroke={INK} stroke-width="2.5"></circle>
+      <ellipse cx="80" cy="70" rx="52" ry="11" fill="none" stroke={LIGHT} stroke-width="4" transform="rotate(-16 80 70)"></ellipse>
+      <path d="M34,128 V116 M34,120 C27,113 21,115 21,119 C27,123 31,123 34,120 Z M34,118 C41,111 47,113 47,117 C41,121 37,121 34,118 Z" fill={SAGE} stroke={INK} stroke-width="1.5" stroke-linejoin="round"></path>
+    </g>
+  )}
+
+  {art === 'clock' && (
+    <g>
+      <circle cx="80" cy="82" r="46" fill={LIGHT} stroke={INK} stroke-width="3"></circle>
+      <circle cx="80" cy="82" r="38" fill="none" stroke={p.main} stroke-width="3"></circle>
+      {clockTicks.map((a) => (
+        <line x1={80 + Math.cos(a) * 30} y1={82 + Math.sin(a) * 30} x2={80 + Math.cos(a) * 34} y2={82 + Math.sin(a) * 34} stroke={INK} stroke-width="2.5" stroke-linecap="round"></line>
+      ))}
+      <line x1="80" y1="82" x2="80" y2="58" stroke={INK} stroke-width="3.5" stroke-linecap="round"></line>
+      <line x1="80" y1="82" x2="98" y2="92" stroke={p.accent} stroke-width="3.5" stroke-linecap="round"></line>
+      <circle cx="80" cy="82" r="4.5" fill={INK}></circle>
+      <path d="M62,30 L80,36 L98,30" fill="none" stroke={INK} stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path>
+    </g>
+  )}
+
+  {art === 'lightbulb' && (
+    <g>
+      {[-70, -35, 0, 35, 70].map((deg) => (
+        <line x1="80" y1="22" x2="80" y2="10" stroke={LIGHT} stroke-width="3.5" stroke-linecap="round" transform={`rotate(${deg} 80 66)`}></line>
+      ))}
+      <path d="M80,34 C99,34 112,48 112,66 C112,80 103,88 98,96 L96,104 H64 L62,96 C57,88 48,80 48,66 C48,48 61,34 80,34 Z" fill={p.main} stroke={INK} stroke-width="3" stroke-linejoin="round"></path>
+      <path d="M70,96 V78 L76,84 L80,76 L84,84 L90,78 V96" fill="none" stroke={INK} stroke-width="2" stroke-linejoin="round" stroke-linecap="round"></path>
+      <rect x="64" y="104" width="32" height="10" rx="3" fill={LIGHT} stroke={INK} stroke-width="2.5"></rect>
+      <rect x="66" y="114" width="28" height="10" rx="3" fill={LIGHT} stroke={INK} stroke-width="2.5"></rect>
+      <path d="M72,124 H88 L84,132 H76 Z" fill={INK}></path>
+    </g>
+  )}
+
+  {art === 'books' && (
+    <g stroke={INK} stroke-width="2.5" stroke-linejoin="round">
+      <line x1="18" y1="128" x2="142" y2="128" stroke-linecap="round"></line>
+      <rect x="30" y="54" width="22" height="74" rx="2" fill={p.main}></rect>
+      <line x1="30" y1="66" x2="52" y2="66"></line>
+      <line x1="30" y1="114" x2="52" y2="114"></line>
+      <rect x="54" y="40" width="26" height="88" rx="2" fill={LIGHT}></rect>
+      <rect x="60" y="58" width="14" height="20" rx="1.5" fill={p.accent} stroke-width="2"></rect>
+      <rect x="82" y="62" width="18" height="66" rx="2" fill={p.accent}></rect>
+      <line x1="82" y1="74" x2="100" y2="74"></line>
+      <rect x="106" y="52" width="22" height="76" rx="2" fill={SAGE} transform="rotate(14 106 128)"></rect>
+    </g>
+  )}
+
+  {art === 'gears' && (
+    <g stroke={INK} stroke-width="2.5" stroke-linejoin="round">
+      <path d={gear(62, 96, 10, 40, 32)} fill={p.main}></path>
+      <circle cx="62" cy="96" r="13" fill={p.bg}></circle>
+      <path d={gear(110, 60, 8, 22, 16)} fill={LIGHT}></path>
+      <circle cx="110" cy="60" r="6" fill={p.bg}></circle>
+    </g>
+  )}
+
+  {art === 'sprout' && (
+    <g stroke={INK} stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round">
+      <path d="M80,100 C80,82 80,70 80,56" fill="none"></path>
+      <path d="M80,74 C64,58 46,60 44,70 C56,82 70,82 80,74 Z" fill={SAGE}></path>
+      <path d="M80,62 C94,44 114,46 116,56 C104,70 90,70 80,62 Z" fill={SAGE}></path>
+      <path d="M48,100 H112 L104,138 H56 Z" fill={p.accent}></path>
+      <rect x="44" y="94" width="72" height="12" rx="3" fill={p.main}></rect>
+    </g>
+  )}
+
+  <g transform="translate(130,26) scale(0.28)"><path class="twinkle" d={star} fill={LIGHT}></path></g>
+  <g transform="translate(26,30) scale(0.15)"><path class="twinkle d2" d={star} fill={LIGHT}></path></g>
+</svg>
+
+<style>
+  .article-art { display: block; width: 100%; height: auto; border-radius: 12px; }
+</style>

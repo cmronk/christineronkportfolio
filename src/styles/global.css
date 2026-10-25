@@ -26,6 +26,9 @@
 
 *, *::before, *::after { box-sizing: border-box; }
 
+/* Make the hidden attribute win over component display rules (like .card { display: flex }) */
+[hidden] { display: none !important; }
+
 body {
   margin: 0;
   background: var(--cream);
@@ -96,14 +99,36 @@ h1, h2, h3 { font-family: var(--font-display); line-height: 1.15; margin: 0; }
 .orbit { transform-origin: 270px 270px; animation: orbit 40s linear infinite; }
 .bob { animation: bob 6s ease-in-out infinite; }
 
-.lift { transition: transform .25s ease, box-shadow .25s ease; }
-.lift:hover { transform: translateY(-4px); box-shadow: 0 12px 24px rgba(42, 33, 24, .14); }
+/* Springy easing: overshoots a little, then settles */
+:root { --spring: cubic-bezier(.34, 1.56, .64, 1); }
+
+/* Hover: a soft shadow and a 2px lift. Calm on purpose. */
+.lift { transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
+.lift:hover, .lift:focus-within {
+  transform: translateY(-2px);
+  border-color: var(--line-strong);
+  box-shadow: 0 10px 24px rgba(42, 33, 24, .10), 0 2px 6px rgba(42, 33, 24, .06);
+}
+
+/* "Read the article →" style links nudge forward slightly */
+.lift .text-link { display: inline-block; transition: transform .25s ease; }
+.lift:hover .text-link { transform: translateX(3px); }
+
+/* Scroll reveal (see src/scripts/reveal.ts) */
+.reveal {
+  opacity: 0;
+  transform: translateY(36px) rotate(-1.5deg) scale(.96);
+  transition: opacity .5s ease, transform .7s var(--spring);
+}
+.reveal:nth-child(even) { transform: translateY(36px) rotate(1.5deg) scale(.96); }
+.reveal.is-in { opacity: 1; transform: none; }
 
 @media (prefers-reduced-motion: reduce) {
   .twinkle, .orbit, .bob { animation: none; }
-  .lift { transition: none; }
-  .lift:hover { transform: none; }
+  .lift, .lift .text-link { transition: box-shadow .25s ease, border-color .25s ease; }
+  .lift:hover, .lift:focus-within, .lift:hover .text-link { transform: none; }
 }
+
 
 /* ---------- Long-form reading (articles and case studies) ---------- */
 .prose { max-width: 68ch; font-size: 18px; line-height: 1.75; }

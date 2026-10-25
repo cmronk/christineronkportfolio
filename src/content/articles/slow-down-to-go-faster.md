@@ -5,6 +5,7 @@ summary: "A look at how history, technology, and human values intersect, and wha
 readTime: "5 min read"
 tags: [ai, history]
 featured: true
+art: "clock" # planet, clock, lightbulb, books, gears, sprout
 ---
 
 

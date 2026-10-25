@@ -3,7 +3,7 @@
 import { render } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ArticleCard from '../../components/ArticleCard.astro';
-import CardArt from '../../components/CardArt.astro';
+import ArticleArt from '../../components/ArticleArt.astro';
 import { getArticles, formatDate } from '../../lib/content';
 
 export async function getStaticPaths() {
@@ -28,7 +28,7 @@ const { Content } = await render(article);
         {tags.length > 0 && <ul class="pill-list">{tags.map((t) => <li>{t}</li>)}</ul>}
       </div>
          
-    <div class="head-art"><CardArt variant={index} shape="square" /></div>
+    <div class="head-art"><ArticleArt art={article.data.art} variant={index} /></div>
     </header>
     <div class="container">
       <div class="prose"><Content /></div>
@@ -53,5 +53,5 @@ const { Content } = await render(article);
   h1 { font-size: clamp(36px, 5vw, 56px); }
   .meta { margin: 0; color: var(--ink-soft); font-size: 15px; }
   .more-title { font-size: 32px; margin-bottom: 24px; }
-  .more { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; }
+  .more { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 360px)); gap: 24px; }
 </style>

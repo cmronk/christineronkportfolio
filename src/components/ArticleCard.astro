@@ -1,35 +1,38 @@
 ---
 import type { CollectionEntry } from 'astro:content';
-import CardArt from './CardArt.astro';
+import ArticleArt from './ArticleArt.astro';
 import { formatDate } from '../lib/content';
 
 interface Props { article: CollectionEntry<'articles'>; variant?: number; label?: string }
 const { article, variant = 0, label } = Astro.props;
-const { title, summary, readTime, date, draft } = article.data;
+const { title, summary, readTime, date, draft, art } = article.data;
 const href = `/writing/${article.id}/`;
 ---
 <article class="card lift">
-  <CardArt variant={variant} />
-  <div class="body">
-    <p class="eyebrow small">
-      {draft && <span class="draft">Draft · </span>}
-      {label ?? formatDate(date)}{readTime && ` · ${readTime}`}
-    </p>
-    <h3><a href={href}>{title}</a></h3>
-    <p class="muted">{summary}</p>
-    <span class="text-link" aria-hidden="true">Read the article →</span>
-  </div>
+  <ArticleArt art={art} variant={variant} class="badge" />
+  <p class="eyebrow small">
+    {draft && <span class="draft">Draft · </span>}
+    {label ?? formatDate(date)}{readTime && ` · ${readTime}`}
+  </p>
+  <h3><a href={href}>{title}</a></h3>
+  <p class="muted">{summary}</p>
+  <span class="text-link" aria-hidden="true">Read the article →</span>
 </article>
 
 <style>
-  .card { position: relative; background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius); padding: 28px; display: flex; flex-wrap: wrap; gap: 24px; }
-  .body { flex: 1 1 200px; min-width: 0; }
-  .small { font-size: 12px; letter-spacing: 0.16em; }
+  /* A square card. If the text ever runs long, the card grows taller instead of cutting it off. */
+  .card {
+    position: relative; aspect-ratio: 1 / 1;
+    background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 24px; display: flex; flex-direction: column; align-items: flex-start;
+  }
+  .card :global(.badge) { width: 80px; margin-bottom: 18px; flex-shrink: 0; }
+  .small { margin: 0 0 8px; font-size: 12px; letter-spacing: 0.16em; }
   .draft { color: var(--rust); }
-  h3 { font-size: 26px; line-height: 1.2; margin-bottom: 12px; }
+  h3 { font-size: 22px; line-height: 1.2; margin-bottom: 8px; text-wrap: balance; }
   h3 a { color: var(--ink); text-decoration: none; }
   /* Makes the whole card clickable while keeping one real link for screen readers */
   h3 a::after { content: ''; position: absolute; inset: 0; border-radius: var(--radius); }
-  .muted { margin: 0 0 16px; font-size: 15px; }
-  .text-link { color: var(--rust); font-size: 15px; }
+  .muted { margin: 0 0 14px; font-size: 15px; line-height: 1.55; }
+  .text-link { color: var(--rust); font-size: 15px; margin-top: auto; }
 </style>

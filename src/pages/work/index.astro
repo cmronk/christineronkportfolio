@@ -38,8 +38,21 @@ const categories = ['All', 'Systems & Integrations', 'Data & Reporting', 'Develo
           </div>
           <p>Sites I've designed and built for organizations and businesses. Most have since been redesigned, so these show them as they were when I built them.</p>
         </div>
-        <div class="grid">
-          {sites.map((s, i) => <SiteCard site={s} variant={i} />)}
+        <div class="carousel" data-carousel data-reveal>
+          <div class="carousel-bar">
+            <p class="carousel-count muted" aria-live="polite"><span data-count>1</span> of {sites.length}</p>
+            <div class="carousel-nav">
+              <button type="button" class="nav-btn" data-prev aria-label="Previous site">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"></path></svg>
+              </button>
+              <button type="button" class="nav-btn" data-next aria-label="Next site">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg>
+              </button>
+            </div>
+          </div>
+          <ul class="track" data-track tabindex="0" aria-label="Selected sites. Scroll sideways or use the arrow buttons.">
+            {sites.map((s, i) => <li class="slide"><SiteCard site={s} variant={i} /></li>)}
+          </ul>
         </div>
       </div>
     </section>
@@ -52,6 +65,27 @@ const categories = ['All', 'Systems & Integrations', 'Data & Reporting', 'Develo
   .filters button { font: inherit; font-size: 15px; padding: 10px 18px; min-height: 44px; border-radius: 999px; border: 1px solid var(--line-strong); background: var(--paper); color: var(--ink); cursor: pointer; }
   .filters button[aria-pressed='true'] { background: var(--ink); color: var(--cream); border-color: var(--ink); }
   .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; }
+
+  /* Sites carousel: native sideways scrolling that snaps to each card */
+  .carousel-bar { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 16px; }
+  .carousel-count { margin: 0; font-size: 15px; font-variant-numeric: tabular-nums; }
+  .carousel-nav { display: flex; gap: 10px; }
+  .nav-btn {
+    display: grid; place-items: center; width: 44px; height: 44px; border-radius: 999px; cursor: pointer;
+    background: var(--paper); color: var(--ink); border: 1px solid var(--line-strong);
+    transition: background-color .2s ease, color .2s ease, border-color .2s ease;
+  }
+  .nav-btn:hover:not(:disabled) { background: var(--ink); color: var(--cream); border-color: var(--ink); }
+  .nav-btn:disabled { opacity: .4; cursor: default; }
+  .track {
+    list-style: none; margin: 0; padding: 4px 4px 20px; /* room for the hover shadow */
+    display: flex; gap: 24px; overflow-x: auto; overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory; scroll-padding-inline: 4px; scroll-behavior: smooth;
+    scrollbar-width: thin; scrollbar-color: var(--line-strong) transparent;
+  }
+  .track:focus-visible { outline: 3px solid var(--mustard); outline-offset: 4px; border-radius: var(--radius); }
+  .slide { flex: 0 0 min(86%, 380px); scroll-snap-align: start; }
+  @media (prefers-reduced-motion: reduce) { .track { scroll-behavior: auto; } }
 </style>
 
 <script>
@@ -59,7 +93,12 @@ const categories = ['All', 'Systems & Integrations', 'Data & Reporting', 'Develo
   const cards = document.querySelectorAll<HTMLElement>('[data-grid] [data-category]');
   const empty = document.querySelector<HTMLElement>('[data-empty]');
 
-  function apply(filter: string) {
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const SPRING = 'cubic-bezier(.34, 1.56, .64, 1)';
+  let run = 0; // bumps on every click so a fast second click wins
+
+  // Instant version: used on page load and for reduced motion
+  function applyNow(filter: string) {
     let shown = 0;
     cards.forEach((card) => {
       const match = filter === 'All' || card.dataset.category === filter;
@@ -70,6 +109,65 @@ const categories = ['All', 'Systems & Integrations', 'Data & Reporting', 'Develo
     if (empty) empty.hidden = shown > 0;
   }
 
+  // Animated version: leaving cards shrink away, staying cards glide to their
+  // new spots (the FLIP technique), and arriving cards pop in one by one
+  async function applyAnimated(filter: string) {
+    const id = ++run;
+    cards.forEach((c) => c.getAnimations().forEach((a) => a.cancel()));
+
+    const matches = (c: HTMLElement) => filter === 'All' || c.dataset.category === filter;
+    const leaving = [...cards].filter((c) => !c.hidden && !matches(c));
+    const staying = [...cards].filter((c) => !c.hidden && matches(c));
+    const entering = [...cards].filter((c) => c.hidden && matches(c));
+
+    buttons.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.filter === filter)));
+
+    // 1. Leaving cards tumble out
+    if (leaving.length) {
+      await Promise.all(leaving.map((c, i) => c.animate(
+        [{ opacity: 1, transform: 'none' }, { opacity: 0, transform: `scale(.8) rotate(${i % 2 ? 4 : -4}deg)` }],
+        { duration: 220, easing: 'ease-in', fill: 'forwards' },
+      ).finished.catch(() => {})));
+      if (id !== run) return;
+    }
+
+    // 2. Record where staying cards are now, then change the layout
+    const first = new Map(staying.map((c) => [c, c.getBoundingClientRect()]));
+    leaving.forEach((c) => { c.hidden = true; c.getAnimations().forEach((a) => a.cancel()); });
+    entering.forEach((c) => { c.hidden = false; });
+    if (empty) empty.hidden = staying.length + entering.length > 0;
+
+    // 3. Staying cards glide from their old spot to the new one
+    staying.forEach((c) => {
+      const a = first.get(c)!;
+      const b = c.getBoundingClientRect();
+      const dx = a.left - b.left;
+      const dy = a.top - b.top;
+      if (dx || dy) {
+        c.animate(
+          [{ transform: `translate(${dx}px, ${dy}px)` }, { transform: 'none' }],
+          { duration: 550, easing: SPRING },
+        );
+      }
+    });
+
+    // 4. Arriving cards pop in with a little bounce
+    entering.forEach((c, i) => {
+      c.animate(
+        [
+          { opacity: 0, transform: `translateY(24px) scale(.85) rotate(${i % 2 ? 3 : -3}deg)` },
+          { opacity: 1, transform: 'none' },
+        ],
+        { duration: 600, delay: 80 + i * 90, easing: SPRING, fill: 'backwards' },
+      );
+    });
+  }
+
+  function apply(filter: string) {
+    if (reduceMotion) applyNow(filter);
+    else applyAnimated(filter);
+  }
+
   buttons.forEach((b) => b.addEventListener('click', () => {
     const filter = b.dataset.filter ?? 'All';
     apply(filter);
@@ -78,7 +176,34 @@ const categories = ['All', 'Systems & Integrations', 'Data & Reporting', 'Develo
     history.replaceState(null, '', url);
   }));
 
+  // ---- Sites carousel ----
+  const carousel = document.querySelector<HTMLElement>('[data-carousel]');
+  const track = carousel?.querySelector<HTMLElement>('[data-track]');
+  const prev = carousel?.querySelector<HTMLButtonElement>('[data-prev]');
+  const next = carousel?.querySelector<HTMLButtonElement>('[data-next]');
+  const count = carousel?.querySelector<HTMLElement>('[data-count]');
+
+  if (track && prev && next) {
+    const slides = [...track.children] as HTMLElement[];
+    const step = () => (slides[1] ? slides[1].offsetLeft - slides[0].offsetLeft : track.clientWidth);
+    const update = () => {
+      const max = track.scrollWidth - track.clientWidth;
+      prev.disabled = track.scrollLeft <= 2;
+      next.disabled = track.scrollLeft >= max - 2;
+      if (count) {
+        // At the far right, count the last card even if it can't snap to the left edge
+        const i = next.disabled ? slides.length : Math.round(track.scrollLeft / step()) + 1;
+        count.textContent = String(Math.min(slides.length, i));
+      }
+    };
+    prev.addEventListener('click', () => track.scrollBy({ left: -step() }));
+    next.addEventListener('click', () => track.scrollBy({ left: step() }));
+    track.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update);
+    update();
+  }
+
   // Supports links like /work/?category=Development from the homepage
   const initial = new URLSearchParams(location.search).get('category');
-  if (initial) apply(initial);
+  if (initial) applyNow(initial);
 </script>

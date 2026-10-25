@@ -7,5 +7,5 @@ summary: "The first website for an Austin interior design studio: a clean, light
 image: "/images/sites/annegallery.png"
 # link: "https://web.archive.org/web/20211210170506/https://www.annebargerdesigns.com/"
 order: 3
-draft: true
+draft: false
 ---

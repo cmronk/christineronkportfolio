@@ -32,16 +32,24 @@ const isArchive = link?.includes('web.archive.org');
 </article>
 
 <style>
-  .site { background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; display: flex; flex-direction: column; }
+  .site { height: 100%; background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; display: flex; flex-direction: column; }
   .shot { aspect-ratio: 16 / 10; background: var(--cream-deep); border-bottom: 1px solid var(--line); overflow: hidden; }
-  .shot img { width: 100%; height: 100%; object-fit: cover; object-position: top center; }
-  .placeholder { height: 100%; display: flex; align-items: center; justify-content: center; }
-  .placeholder :global(.card-art) { width: 110px; }
-  .body { padding: 20px 22px 24px; display: flex; flex-direction: column; gap: 8px; align-items: flex-start; }
+  .shot img { width: 100%; height: 100%; object-fit: cover; object-position: top center; transition: transform .6s ease; }
+  /* No screenshot yet: the illustration fills the frame */
+  .placeholder { height: 100%; }
+  .placeholder :global(.card-art) { width: 100%; height: 100%; max-height: none; border-radius: 0; }
+  .body { flex: 1; padding: 20px 22px 24px; display: flex; flex-direction: column; gap: 8px; align-items: flex-start; }
   .small { margin: 0; font-size: 12px; letter-spacing: 0.16em; }
   .draft { color: var(--rust); }
   h3 { font-size: 24px; }
   .role { margin: 0; font-size: 14px; font-weight: 600; color: var(--olive-text); }
   .muted { margin: 0; font-size: 15px; }
-  .text-link { font-size: 15px; margin-top: 4px; }
+  .text-link { font-size: 15px; margin-top: auto; padding-top: 4px; }
+
+  /* Hover: the screenshot zooms in just a touch */
+  .site:hover .shot img { transform: scale(1.03); }
+  @media (prefers-reduced-motion: reduce) {
+    .shot img { transition: none; }
+    .site:hover .shot img { transform: none; }
+  }
 </style>
