@@ -1,21 +1,21 @@
 ---
 const path = Astro.url.pathname;
+// The logo links home, so "Home" isn't repeated here
 const links = [
-  { href: '/', label: 'Home' },
   { href: '/work/', label: 'Work' },
   { href: '/writing/', label: 'Writing' },
   { href: '/about/', label: 'About' },
 ];
-const isActive = (href: string) => (href === '/' ? path === '/' : path.startsWith(href));
+const isActive = (href: string) => path.startsWith(href);
 ---
 <header class="site-header">
   <div class="container inner">
-    <a href="/" class="brand">
+    <a href="/" class="brand" aria-label="Christine Ronk, home">
       <svg width="36" height="36" viewBox="-40 -40 80 80" aria-hidden="true">
         <path d="M0,-40 L5,-5 L40,0 L5,5 L0,40 L-5,5 L-40,0 L-5,-5 Z" fill="#C65A3A"></path>
         <path d="M0,-22 L3,-3 L22,0 L3,3 L0,22 L-3,3 L-22,0 L-3,-3 Z" fill="#D4A23A" transform="rotate(45)"></path>
       </svg>
-      <span>CHRISTINE RONK</span>
+      <span aria-hidden="true">CHRISTINE RONK</span>
     </a>
     <nav aria-label="Main">
       {links.map((l) => (
@@ -28,10 +28,35 @@ const isActive = (href: string) => (href === '/' ? path === '/' : path.startsWit
 
 <style>
   .site-header { border-bottom: 1px solid var(--line); }
-  .inner { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px 32px; padding-top: 24px; padding-bottom: 24px; }
-  .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--ink); font-size: 14px; font-weight: 600; letter-spacing: 0.18em; }
-  nav { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 28px; font-size: 15px; }
-  nav a:not(.cta) { color: var(--ink); text-decoration: none; padding: 10px 0; }
+  .inner {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 32px; padding-top: 24px; padding-bottom: 24px;
+  }
+  .brand {
+    display: flex; align-items: center; gap: 12px; flex-shrink: 0;
+    text-decoration: none; color: var(--ink);
+    font-size: 14px; font-weight: 600; letter-spacing: 0.18em; white-space: nowrap;
+  }
+  nav { display: flex; align-items: center; gap: 28px; font-size: 15px; }
+  nav a:not(.cta) { color: var(--ink); text-decoration: none; padding: 10px 0; white-space: nowrap; }
+  nav a:not(.cta):hover { color: var(--rust); }
   nav a[aria-current='page'] { color: var(--rust); font-weight: 600; }
-  .cta { padding: 10px 20px; font-size: 14px; }
+  .cta { padding: 10px 20px; font-size: 14px; white-space: nowrap; }
+
+  /* Phones and small tablets: brand on its own row, nav in one row below */
+  @media (max-width: 720px) {
+    .inner {
+      flex-direction: column; align-items: stretch; gap: 14px;
+      padding-top: 18px; padding-bottom: 14px;
+    }
+    nav { gap: 22px; }
+    nav a:not(.cta) { padding: 10px 2px; }
+    .cta { min-height: 40px; padding: 8px 16px; margin-left: auto; }
+  }
+
+  /* Very narrow phones (old iPhone SE, Galaxy Fold) */
+  @media (max-width: 360px) {
+    nav { font-size: 14px; gap: 8px; }
+    .cta { padding: 8px 12px; font-size: 13px; }
+  }
 </style>
