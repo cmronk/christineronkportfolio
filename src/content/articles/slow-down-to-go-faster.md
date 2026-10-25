@@ -1,6 +1,6 @@
 ---
 title: "The Productivity Trap: What Are We Actually Progressing Toward?"
-date: 2026-20-24
+date: 2026-10-24
 summary: "A look at how history, technology, and human values intersect, and what we can learn from the past as we build the future."
 readTime: "5 min read"
 tags: [ai, history]
