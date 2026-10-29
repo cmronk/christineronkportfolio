@@ -2,6 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import CaseStudyCard from '../../components/CaseStudyCard.astro';
 import SiteCard from '../../components/SiteCard.astro';
+import WorkArt from '../../components/WorkArt.astro';
 import { getCaseStudies, getSites } from '../../lib/content';
 
 const studies = await getCaseStudies();
@@ -9,11 +10,18 @@ const sites = await getSites();
 const categories = ['All', 'Systems & Integrations', 'Data & Reporting', 'Development'];
 ---
 <BaseLayout title="Work" description="Case studies in systems, data, and development.">
-  <section class="section">
+    <section class="section">
     <div class="container">
-      <p class="eyebrow">Work</p>
-      <h1 class="section-title">Case studies</h1>
-      <p class="muted intro">Problems I've solved, how I approached them, and what changed.</p>
+      <div class="work-head">
+        <div class="work-copy">
+          <p class="eyebrow">Work</p>
+          <h1 class="section-title">Case studies</h1>
+          <p class="muted intro">Problems I've solved, how I approached them, and what changed.</p>
+        </div>
+        <div class="work-art">
+          <WorkArt />
+        </div>
+      </div>
 
       <div class="filters" role="group" aria-label="Filter by category">
         {categories.map((c, i) => (
@@ -86,6 +94,19 @@ const categories = ['All', 'Systems & Integrations', 'Data & Reporting', 'Develo
   .track:focus-visible { outline: 3px solid var(--mustard); outline-offset: 4px; border-radius: var(--radius); }
   .slide { flex: 0 0 min(86%, 380px); scroll-snap-align: start; }
   @media (prefers-reduced-motion: reduce) { .track { scroll-behavior: auto; } }
+    .work-head {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 380px);
+    gap: 48px;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+  .work-art { display: flex; justify-content: center; }
+
+  @media (max-width: 860px) {
+    .work-head { grid-template-columns: 1fr; gap: 16px; }
+    .work-art { max-width: 300px; margin: 0 auto 8px; }
+  }
 </style>
 
 <script>

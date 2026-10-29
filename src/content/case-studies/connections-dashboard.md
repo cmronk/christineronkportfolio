@@ -1,41 +1,42 @@
 ---
 title: "Connections Dashboard"
-summary: "My first dashboard: one view of every connection request across our campuses, so staff could see how fast new people were reached, which connectors needed help, and how this year compared to last. Staff still use it weekly, and a similar feature was later added to core Rock."
+summary: "My first dashboard: one view of every connection request across our campuses, so staff could see how fast new people were reached, which connectors needed help, and how this year compared to last. The team still reviews it together every week, and a similar feature was later added to core Rock."
 category: "Data & Reporting"
 tools: ["Rock RMS", "SQL", "Lava"]
-problem: "Connection requests are how we follow up with new people, and they're spread across connectors all over our staff. No one could easily see how long people waited for a first contact, who was overloaded, or how each campus was doing."
-approach: "I built one dashboard that answers those questions at a glance: response time by campus and by connector, the state of every request, and new leads compared to last year."
-decisions: "I made response time the headline and color coded it everywhere: green for 0 to 3 days, yellow for 4 to 6, red for 7 or more. A leader can spot a problem without reading a single number."
-result: "Staff still use it every week or more. Rock's team saw it, and a similar feature was later added to core Rock. I've walked another church through how it works, and I still get questions about it from others in the Rock community."
+stats:
+  - value: "84%"
+    label: "Shorter wait for a new person's first contact"
+  - value: "Weekly"
+    label: "Reviewed together by the team, three years in"
+  - value: "Core Rock"
+    label: "A similar feature later shipped in Rock itself"
 order: 2
+featured: true
 draft: false
 illustration: "connections"
+aside: "paper-plane"
 ---
 
 ## The problem
 
 Connection requests are one of the main ways we follow up with people. Someone registers for an event, checks their kids in for the first time, or fills out a form, and a request goes to a connector to reach out.
 
-We use them a lot, and we spread connectors across the whole staff. That's good for sharing the load, but it made the big picture hard to see:
+We spread connectors across the whole staff. That shares the load, but it made the big picture hard to see:
 
 - How long are new people waiting before someone reaches out the first time?
 - Which connectors are keeping up, and which have a long list still waiting?
 - How is each campus doing?
 - Are we seeing more new people than last year, or fewer?
 
-Without those answers, a request could sit for days and nobody would know.
+Without those answers, a request could sit for weeks and nobody would know. Some did.
 
 ## How I approached it
 
-This was the first dashboard I ever built. I started from the questions staff and leaders kept asking and gave each one a clear place on the page.
+This was the first dashboard I ever built. I started from the questions staff and leaders kept asking and gave each one a clear place on the page. The preview above shows the main panels. A few details that aren't obvious from it:
 
-- **Campus and date filters.** Pick a campus, or all of them, and a date range. It defaults to the last two months, which matches how teams review their work.
-- **Days to first contact, by campus.** Each campus shows its average number of days before someone first reaches out, sorted so the slowest is on top.
-- **Connection state.** A gauge shows how many requests are completed, in follow up, active, or inactive.
-- **New leads, this year vs. last.** Stacked by campus, so growth or decline stands out right away.
-- **Activity totals.** Total and completed requests, with the change from the prior year.
-- **Connector stats.** Every connector, with the share of their requests that have no first contact recorded yet, color coded by their average response time.
-- **A color guide,** so everyone reads the colors the same way.
+- **It opens on the last two months**, which matches how teams review their work. Campus and date filters cover everything else.
+- **Slowest campus on top.** Days to first contact is sorted so the problem is the first thing you see.
+- **Uncontacted leads are called out.** Each connector shows the share of their requests with no first contact recorded yet.
 
 I also built a separate connector report that shows the types of requests coming in and helps match each new person with a connector based on demographics, so people are more likely to connect with someone they relate to.
 
@@ -48,8 +49,16 @@ I also built a separate connector report that shows the types of requests coming
 
 ## The result
 
-Once teams could see their response times, they got faster. Our average days to first contact came down considerably. Staff still use the dashboard every week or more. Rock's team saw it, and a similar feature was later added to core Rock. I've walked another church through how it works, and I still get questions about it from others in the Rock community.
+Once teams could see their response times, they got faster. In 2021, new people waited an average of 48 days for a first contact. In the dashboard's first year, that dropped to under 8 days, even as requests grew by 70%.
+
+The clearest proof came by accident. In 2025 we stopped reviewing it, and I hid it for a while. The average crept back up to nearly 20 days. When we brought it back into our weekly meeting, it dropped to under 9.
+
+Now it's part of the routine. The dashboard is on screen in our weekly team meeting, where we review it together, and about 25 staff open it on their own each month.
+
+Rock's team saw it, and a similar feature was later added to core Rock. I've walked another church through how it works, and I still get questions about it from others in the Rock community.
 
 ## What changed next
 
-Rock's version 19 overhaul of connection requests covered much of what my dashboard did. That freed us to shift our focus from making sure staff follow up to making sure people get connected and stay, which led to the [Growth Track Manager](/work/growth-track-manager/).
+Rock's version 19 overhaul of connection requests covered much of what my dashboard did. Even through that change, our largest campus is reaching new people in about 3 days, and most campuses are within a week. A couple still aren't where we want them, which is exactly what the weekly review is for.
+
+That shift also freed us to change our focus from making sure staff follow up to making sure people get connected and stay, which led to the [Growth Track Manager](/work/growth-track-manager/).

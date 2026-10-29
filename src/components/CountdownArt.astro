@@ -1,0 +1,133 @@
+---
+// Sidebar illustration: a stopwatch that counts down from one number to another,
+// with a ring that shrinks and shifts from terracotta to sage as it goes.
+// Used on the Connections Dashboard case study to show 48 → 8 days.
+//
+// Props:
+//   from     starting number (default 48)
+//   to       ending number (default 8)
+//   unit     word under the number (default "days")
+//   caption  line under the stopwatch
+//
+// It starts counting when it scrolls into view, and "Replay" runs it again.
+// Visitors with reduced motion see the final number right away.
+interface Props { from?: number; to?: number; unit?: string; caption?: string; }
+const { from = 48, to = 8, unit = 'days', caption = 'Average wait for a new person’s first contact, before the dashboard vs. its first year' } = Astro.props;
+
+// Tick marks around the face: 60 small, every 5th one longer
+const ticks = Array.from({ length: 60 }, (_, i) => {
+  const a = (i / 60) * Math.PI * 2;
+  const long = i % 5 === 0;
+  const r1 = long ? 74 : 79;
+  const r2 = 86;
+  return {
+    x1: 120 + Math.sin(a) * r1, y1: 150 - Math.cos(a) * r1,
+    x2: 120 + Math.sin(a) * r2, y2: 150 - Math.cos(a) * r2,
+    long,
+  };
+});
+const R = 62;
+const C = 2 * Math.PI * R;
+---
+<figure class="countdown" data-countdown data-from={from} data-to={to}>
+  <svg viewBox="0 0 240 260" aria-hidden="true">
+    <!-- Crown and side button -->
+    <rect x="108" y="30" width="24" height="14" rx="3" fill="#D4A23A" stroke="#2A2118" stroke-width="3"></rect>
+    <rect x="114" y="42" width="12" height="16" fill="#C9B793" stroke="#2A2118" stroke-width="3"></rect>
+    <path d="M186,72 L198,60 L208,70 L196,82 Z" fill="#C65A3A" stroke="#2A2118" stroke-width="3" stroke-linejoin="round"></path>
+
+    <!-- Case and face -->
+    <circle cx="120" cy="150" r="96" fill="#EADBC0" stroke="#2A2118" stroke-width="4"></circle>
+    <circle cx="120" cy="150" r="88" fill="#F7EBDB" stroke="#2A2118" stroke-width="2.5"></circle>
+    <g stroke="#2A2118" stroke-linecap="round">
+      {ticks.map((t) => (
+        <line x1={t.x1.toFixed(1)} y1={t.y1.toFixed(1)} x2={t.x2.toFixed(1)} y2={t.y2.toFixed(1)}
+              stroke-width={t.long ? 2.5 : 1.2} opacity={t.long ? 1 : 0.5}></line>
+      ))}
+    </g>
+
+    <!-- Progress ring: a track, then the shrinking arc (starts at 12 o'clock) -->
+    <circle cx="120" cy="150" r={R} fill="none" stroke="#E9DCC6" stroke-width="10"></circle>
+    <circle class="ring" cx="120" cy="150" r={R} fill="none" stroke="#C65A3A" stroke-width="10"
+            stroke-linecap="round" stroke-dasharray={C.toFixed(2)} stroke-dashoffset="0"
+            transform="rotate(-90 120 150)" data-circ={C.toFixed(2)}></circle>
+
+    <!-- Number and unit -->
+    <text class="num" x="120" y="160" text-anchor="middle">{to}</text>
+    <text class="unit" x="120" y="184" text-anchor="middle">{unit}</text>
+
+    <!-- A couple of sparkles to match the other illustrations -->
+    <g transform="translate(28,58) scale(0.3)"><path class="twinkle" d="M0,-40 L5,-5 L40,0 L5,5 L0,40 L-5,5 L-40,0 L-5,-5 Z" fill="#D4A23A"></path></g>
+    <g transform="translate(218,232) scale(0.22)"><path class="twinkle d2" d="M0,-40 L5,-5 L40,0 L5,5 L0,40 L-5,5 L-40,0 L-5,-5 Z" fill="#56684F"></path></g>
+  </svg>
+  <figcaption>
+    {caption}
+    <button type="button" class="replay" data-replay>Replay</button>
+  </figcaption>
+</figure>
+
+<style>
+  .countdown { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center; }
+  .countdown svg { width: 100%; max-width: 240px; height: auto; overflow: visible; }
+  .num { font-family: var(--font-display); font-size: 54px; fill: #2A2118; font-variant-numeric: tabular-nums; }
+  .unit { font-size: 14px; letter-spacing: 0.12em; text-transform: uppercase; fill: #56684F; }
+  figcaption { font-size: 14px; color: var(--ink-soft); max-width: 30ch; line-height: 1.5; }
+  .replay {
+    font: inherit; font-size: 14px; background: none; border: 0; padding: 0; margin-left: 4px;
+    color: var(--terracotta); text-decoration: underline; cursor: pointer;
+  }
+</style>
+
+<script>
+  // Color stops: terracotta at the start, gold in the middle, sage at the end
+  const STOPS = [[198, 90, 58], [212, 162, 58], [86, 104, 79]];
+  function colorAt(p: number) {
+    const seg = p < 0.5 ? 0 : 1;
+    const t = p < 0.5 ? p / 0.5 : (p - 0.5) / 0.5;
+    const [a, b] = [STOPS[seg], STOPS[seg + 1]];
+    const c = a.map((v, i) => Math.round(v + (b[i] - v) * t));
+    return `rgb(${c.join(',')})`;
+  }
+  const ease = (t: number) => 1 - Math.pow(1 - t, 3); // ease-out: fast at first, settles slowly
+
+  document.querySelectorAll<HTMLElement>('[data-countdown]').forEach((el) => {
+    const from = Number(el.dataset.from);
+    const to = Number(el.dataset.to);
+    const num = el.querySelector<SVGTextElement>('.num')!;
+    const ring = el.querySelector<SVGCircleElement>('.ring')!;
+    const circ = Number(ring.dataset.circ);
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const DURATION = 3200;
+    let frame = 0;
+
+    // Ring length is the current value as a share of the starting value
+    function draw(value: number, progress: number) {
+      num.textContent = String(Math.round(value));
+      ring.style.strokeDashoffset = String(circ * (1 - value / from));
+      ring.style.stroke = colorAt(progress);
+    }
+
+    function run() {
+      cancelAnimationFrame(frame);
+      if (reduce) { draw(to, 1); return; }
+      const start = performance.now();
+      const tick = (now: number) => {
+        const t = Math.min(1, (now - start) / DURATION);
+        const p = ease(t);
+        draw(from + (to - from) * p, p);
+        if (t < 1) frame = requestAnimationFrame(tick);
+      };
+      draw(from, 0);
+      frame = requestAnimationFrame(tick);
+    }
+
+    // Start when it scrolls into view, once
+    draw(reduce ? to : from, reduce ? 1 : 0);
+    const io = new IntersectionObserver((entries) => {
+      if (entries.some((e) => e.isIntersecting)) { run(); io.disconnect(); }
+    }, { threshold: 0.5 });
+    io.observe(el);
+
+    el.querySelector('[data-replay]')?.addEventListener('click', run);
+  });
+</script>

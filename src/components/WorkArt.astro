@@ -1,0 +1,184 @@
+---
+// About page illustration: an architect's drafting table on a little planet.
+// A blueprint of a small system diagram sits on the board, a swing-arm lamp
+// lights it, and a dashed "connection" ring circles it with a star traveling it.
+//
+// Same setup as the Writing illustration:
+// viewBox is 400 wide, 260 tall. (0,0) is top-left, y grows DOWN.
+// The ring is one ellipse: center (200,140), radii 160 x 66, tilted -10 degrees,
+// drawn in two halves so it passes behind and in front of the table.
+//
+// Motion (all CSS, in the <style> block below):
+//   - .float        starbursts drift up and down
+//   - .twinkle      sparkles pulse (shared class from global.css)
+//   - .orbiter      a small star travels the ring
+//   - .bob          the table gently rises and settles
+//   - .flow         connector lines on the blueprint move like data
+// Everything stops for visitors with "reduce motion" turned on.
+//
+// Note: the orbiter star's size is baked into its path coordinates on purpose.
+// iOS Safari drops an SVG transform attribute on elements that use offset-path.
+---
+<svg viewBox="0 0 400 260" class="about-art" aria-hidden="true">
+
+  <!-- 1. Backdrop planet -->
+  <circle cx="200" cy="140" r="96" fill="#C65A3A"></circle>
+
+  <!-- 2. Back half of the ring, dashed like a connection line -->
+  <path d="M42.4,167.8 A160,66 -10 0 1 357.6,112.2" fill="none" stroke="#56684F" stroke-width="4" stroke-linecap="round" stroke-dasharray="14 9"></path>
+
+  <!-- 3. Traveling star, back copy -->
+  <path class="orbiter" d="M0,-14.4 L1.8,-1.8 L14.4,0 L1.8,1.8 L0,14.4 L-1.8,1.8 L-14.4,0 L-1.8,-1.8 Z" fill="#D4A23A" stroke="#2A2118" stroke-width="1.5" stroke-linejoin="round"></path>
+
+  <!-- 4. The drafting table, grouped so it bobs as one piece -->
+  <g class="bob">
+
+    <!-- Legs: an A-frame with a crossbar and little feet -->
+    <g stroke="#2A2118" stroke-linecap="round" fill="none">
+      <path d="M132,166 L116,232 M268,166 L284,232" stroke-width="5"></path>
+      <path d="M124,200 L276,200" stroke-width="4"></path>
+    </g>
+    <path d="M108,232 L124,232 M276,232 L292,232" stroke="#2A2118" stroke-width="5" stroke-linecap="round"></path>
+
+    <!-- Board: tilted back, so the top edge is a little narrower -->
+    <path d="M122,52 L278,52 L292,158 L108,158 Z" fill="#EADBC0" stroke="#2A2118" stroke-width="3" stroke-linejoin="round"></path>
+    <!-- Pencil ledge along the bottom -->
+    <rect x="102" y="157" width="196" height="10" rx="3" fill="#C9B793" stroke="#2A2118" stroke-width="3"></rect>
+
+    <!-- Blueprint paper -->
+    <path d="M134,62 L266,62 L278,148 L122,148 Z" fill="#2F3B33" stroke="#2A2118" stroke-width="2.5" stroke-linejoin="round"></path>
+    <!-- Faint grid -->
+    <g stroke="#A9BFA4" stroke-width="1" opacity="0.18">
+      <path d="M137,78 H263 M137,94 H263 M137,110 H263 M137,126 H263 M137,142 H263"></path>
+      <path d="M150,66 V146 M174,66 V146 M198,66 V146 M222,66 V146 M246,66 V146"></path>
+    </g>
+    <!-- Tape on the top corners -->
+    <rect x="128" y="56" width="16" height="7" rx="1.5" fill="#D4A23A" opacity="0.85" transform="rotate(-20 136 59.5)"></rect>
+    <rect x="256" y="56" width="16" height="7" rx="1.5" fill="#D4A23A" opacity="0.85" transform="rotate(20 264 59.5)"></rect>
+
+    <!-- System diagram: two boxes feeding a highlighted third -->
+    <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path class="flow" d="M180,84 H220" stroke="#A9BFA4" stroke-width="2" stroke-dasharray="4 4"></path>
+      <path class="flow" d="M163,93 V107 H202 V119" stroke="#A9BFA4" stroke-width="2" stroke-dasharray="4 4"></path>
+      <path class="flow" d="M239,93 V107 H202" stroke="#A9BFA4" stroke-width="2" stroke-dasharray="4 4"></path>
+      <rect x="146" y="75" width="34" height="18" rx="3" stroke="#A9BFA4" stroke-width="2"></rect>
+      <rect x="220" y="75" width="38" height="18" rx="3" stroke="#A9BFA4" stroke-width="2"></rect>
+      <rect x="184" y="119" width="36" height="18" rx="3" fill="#D4A23A" fill-opacity="0.25" stroke="#D4A23A" stroke-width="2"></rect>
+    </g>
+    <!-- Little "labels" inside the boxes -->
+    <g fill="#A9BFA4" opacity="0.7">
+      <rect x="152" y="81" width="20" height="3" rx="1.5"></rect>
+      <rect x="152" y="86" width="13" height="3" rx="1.5"></rect>
+      <rect x="226" y="81" width="24" height="3" rx="1.5"></rect>
+      <rect x="226" y="86" width="15" height="3" rx="1.5"></rect>
+    </g>
+    <rect x="190" y="125" width="22" height="3" rx="1.5" fill="#D4A23A"></rect>
+    <rect x="190" y="130" width="14" height="3" rx="1.5" fill="#D4A23A" opacity="0.7"></rect>
+
+    <!-- Set square resting on the paper -->
+    <path d="M232,144 L268,144 L264,114 Z" fill="#D4A23A" fill-opacity="0.2" stroke="#D4A23A" stroke-width="2" stroke-linejoin="round"></path>
+    <path d="M244,140 L260,140 L258.4,127 Z" fill="none" stroke="#D4A23A" stroke-width="1.5" stroke-linejoin="round"></path>
+
+    <!-- Light from the lamp falling across the paper -->
+    <path d="M300,50 L314,62 L250,128 L226,100 Z" fill="#F7EBDB" opacity="0.12"></path>
+
+    <!-- Pencil lying on the ledge -->
+    <g transform="translate(150,155) rotate(-3)">
+      <rect x="-9" y="0" width="6" height="7" rx="1.5" fill="#C65A3A" stroke="#2A2118" stroke-width="1.5"></rect>
+      <rect x="-3" y="0" width="4" height="7" fill="#C9B793" stroke="#2A2118" stroke-width="1.5"></rect>
+      <rect x="1" y="0" width="54" height="7" fill="#D4A23A" stroke="#2A2118" stroke-width="1.5"></rect>
+      <path d="M55,0 L66,3.5 L55,7 Z" fill="#EADBC0" stroke="#2A2118" stroke-width="1.5" stroke-linejoin="round"></path>
+      <path d="M62.5,2.3 L66,3.5 L62.5,4.7 Z" fill="#2A2118"></path>
+    </g>
+
+    <!-- Swing-arm lamp clamped to the top-right corner of the board -->
+    <g fill="none" stroke="#2A2118" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M278,56 L294,24 L318,38" stroke-width="4"></path>
+    </g>
+    <rect x="272" y="50" width="12" height="10" rx="2" fill="#C9B793" stroke="#2A2118" stroke-width="2.5"></rect>
+    <circle cx="294" cy="24" r="4" fill="#D4A23A" stroke="#2A2118" stroke-width="2"></circle>
+    <g transform="translate(318,40) rotate(40)">
+      <path d="M-7,0 L7,0 L13,15 L-13,15 Z" fill="#C65A3A" stroke="#2A2118" stroke-width="2.5" stroke-linejoin="round"></path>
+      <path d="M-6,15 A6,4 0 0 0 6,15" fill="#F7EBDB" stroke="#2A2118" stroke-width="1.5"></path>
+    </g>
+  </g>
+
+  <!-- 5. Front half of the ring -->
+  <path d="M357.6,112.2 A160,66 -10 0 1 42.4,167.8" fill="none" stroke="#56684F" stroke-width="4" stroke-linecap="round" stroke-dasharray="14 9"></path>
+
+  <!-- 6. Traveling star, front copy -->
+  <path class="orbiter orbiter--front" d="M0,-14.4 L1.8,-1.8 L14.4,0 L1.8,1.8 L0,14.4 L-1.8,1.8 L-14.4,0 L-1.8,-1.8 Z" fill="#D4A23A" stroke="#2A2118" stroke-width="1.5" stroke-linejoin="round"></path>
+
+  <!-- 7. Floating starbursts -->
+  <g class="float">
+    <path d="M0,-40 L6,-14 L28,-28 L14,-6 L40,0 L14,6 L28,28 L6,14 L0,40 L-6,14 L-28,28 L-14,6 L-40,0 L-14,-6 L-28,-28 L-6,-14 Z" transform="translate(84,56) scale(0.4)" fill="#E9DCC6" stroke="#2A2118" stroke-width="4" stroke-linejoin="round"></path>
+  </g>
+  <g class="float d2">
+    <path d="M0,-40 L6,-14 L28,-28 L14,-6 L40,0 L14,6 L28,28 L6,14 L0,40 L-6,14 L-28,28 L-14,6 L-40,0 L-14,-6 L-28,-28 L-6,-14 Z" transform="translate(332,214) scale(0.3)" fill="#A9BFA4" stroke="#2A2118" stroke-width="5" stroke-linejoin="round"></path>
+  </g>
+
+  <!-- 8. Twinkling sparkles -->
+  <g transform="translate(364,48) scale(0.42)"><path class="twinkle" d="M0,-40 L5,-5 L40,0 L5,5 L0,40 L-5,5 L-40,0 L-5,-5 Z" fill="#D4A23A"></path></g>
+  <g transform="translate(52,118) scale(0.25)"><path class="twinkle d2" d="M0,-40 L5,-5 L40,0 L5,5 L0,40 L-5,5 L-40,0 L-5,-5 Z" fill="#C65A3A"></path></g>
+  <g transform="translate(204,24) scale(0.18)"><path class="twinkle d3" d="M0,-40 L5,-5 L40,0 L5,5 L0,40 L-5,5 L-40,0 L-5,-5 Z" fill="#56684F"></path></g>
+</svg>
+
+<style>
+  .about-art { width: 100%; max-width: 420px; height: auto; overflow: visible; }
+
+  /* ---------- Floating starbursts ---------- */
+  @keyframes float {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50%      { transform: translateY(-8px) rotate(10deg); }
+  }
+  .float {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: float 8.5s ease-in-out infinite;
+  }
+  .float.d2 { animation-duration: 10.5s; animation-delay: -3s; }
+
+  /* ---------- Table bob ---------- */
+  @keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-4px); }
+  }
+  .bob { animation: bob 8.5s ease-in-out infinite; }
+
+  /* ---------- Data flowing along the blueprint connectors ----------
+     The dash pattern is 4 on, 4 off (8 total), so shifting by a multiple of 8
+     loops seamlessly. Negative values move the dashes forward. */
+  @keyframes flow {
+    to { stroke-dashoffset: -16; }
+  }
+  .flow { animation: flow 2.4s linear infinite; }
+
+  /* ---------- Star traveling the ring ----------
+     Same track as the ring: front half first, then the back half. */
+  .orbiter {
+    offset-path: path('M357.6,112.2 A160,66 -10 0 1 42.4,167.8 A160,66 -10 0 1 357.6,112.2');
+    offset-rotate: 0deg;
+    animation: orbit-track 26s linear infinite, orbit-back 26s linear infinite;
+  }
+  .orbiter--front { animation: orbit-track 26s linear infinite, orbit-front 26s linear infinite; }
+
+  @keyframes orbit-track {
+    from { offset-distance: 0%; }
+    to   { offset-distance: 100%; }
+  }
+  @keyframes orbit-back {
+    0%, 49.9%   { opacity: 0; }
+    50%, 100%   { opacity: 1; }
+  }
+  @keyframes orbit-front {
+    0%, 49.9%   { opacity: 1; }
+    50%, 100%   { opacity: 0; }
+  }
+
+  /* ---------- Respect reduced motion ---------- */
+  @media (prefers-reduced-motion: reduce) {
+    .float, .bob, .flow { animation: none; }
+    .orbiter { animation: none; offset-distance: 10%; opacity: 0; }
+    .orbiter--front { opacity: 1; }
+  }
+</style>

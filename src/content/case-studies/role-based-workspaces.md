@@ -8,7 +8,7 @@ approach: "I rebuilt the homepage around what staff need daily: campus metrics w
 decisions: "Workspaces appear only for the roles that use them, using Rock security, so the page stays focused as it grows. Every tile leads to a task, not just a report."
 result: "Staff feedback has been strongly positive, and questions about where to find things dropped noticeably, especially from campus pastors and the Community Life team."
 quote: "The goal wasn't a prettier homepage. It was a page that answers 'what do I need today?' for every person who opens it."
-featured: true
+featured: false
 order: 1
 # Blur internal numbers, names, and event details before adding these.
 # beforeImage: "/images/workspaces/before.png"

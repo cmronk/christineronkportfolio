@@ -27,12 +27,25 @@ const caseStudies = defineCollection({
     summary: z.string(),
     category: z.enum(['Systems & Integrations', 'Data & Reporting', 'Development']),
     tools: z.array(z.string()).default([]),
-    // The four-column overview at the top of each case study
-    problem: z.string(),
-    approach: z.string(),
-    decisions: z.string(),
-    result: z.string(),
+    // Big-number strip at the top of each case study (up to three).
+    // When a case study has stats, they replace the four-column overview below.
+    //   stats:
+    //     - value: "48 → 8 days"
+    //       label: "Average wait for a first contact"
+    stats: z.array(z.object({
+      value: z.string(),
+      label: z.string(),
+    })).max(3).optional(),
+    // The older four-column overview. Only shown when a case study has no stats.
+    // Optional now, so updated case studies can drop them.
+    problem: z.string().optional(),
+    approach: z.string().optional(),
+    decisions: z.string().optional(),
+    result: z.string().optional(),
     quote: z.string().optional(),
+    // Optional sidebar illustration beside the story, shown when there's no quote.
+    // Add more names here as you make more.
+    aside: z.enum(['paper-plane', 'countdown']).optional(),
     // Optional before/after screenshots for the comparison slider.
     // Put the images in /public/images/ and reference them like "/images/workspaces-before.png".
     beforeImage: z.string().optional(),

@@ -2,6 +2,9 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import HeroArt from '../components/HeroArt.astro';
 import BeforeAfter from '../components/BeforeAfter.astro';
+import GrowthTrackArt from '../components/GrowthTrackArt.astro';
+import DevotionalArt from '../components/DevotionalArt.astro';
+import ConnectionsArt from '../components/ConnectionsArt.astro';
 import ArticleCard from '../components/ArticleCard.astro';
 import ContactForm from '../components/ContactForm.astro';
 import Star from '../components/Star.astro';
@@ -68,8 +71,18 @@ const categories = [
   {featured && (
     <section class="section section--tint">
       <div class="container featured">
+        <!-- Same visual as the top of the case study page:
+             its illustration if it has one, otherwise the before/after slider -->
         <div class="featured-visual">
-          <BeforeAfter beforeImage={featured.data.beforeImage} afterImage={featured.data.afterImage} />
+          {featured.data.illustration === 'connections' ? (
+            <ConnectionsArt />
+          ) : featured.data.illustration === 'growth-track' ? (
+            <GrowthTrackArt />
+          ) : featured.data.illustration === 'devotional' ? (
+            <DevotionalArt />
+          ) : (
+            <BeforeAfter beforeImage={featured.data.beforeImage} afterImage={featured.data.afterImage} />
+          )}
         </div>
         <div class="featured-copy">
           <p class="eyebrow">Featured project</p>

@@ -1,0 +1,213 @@
+---
+// About page illustration: a big coffee mug at the center of its own little
+// solar system, with four moons orbiting it: run, family, tech, and faith.
+// Steam curls up from the mug, and the site's logo star is on the front.
+//
+// Same setup as the other illustrations:
+// viewBox is 400 wide, 260 tall. (0,0) is top-left, y grows DOWN.
+// The moons follow an invisible ellipse (no orbit is drawn):
+// center (200,140), radii 160 x 66, tilted -10 degrees.
+// Moons on the back half are drawn before the mug, so they slip behind it.
+// Moon sizes, largest to smallest: faith, family, tech, run.
+//
+// Each moon exists twice: a "back" copy (drawn behind the mug) and a
+// "front" copy (drawn on top). Only one is visible at a time, swapped at the
+// orbit's two ends, so a moon looks like it travels all the way around.
+// The shoe faces the way it travels: left on the front half, right on the back.
+//
+// Motion (all CSS, in the <style> block below):
+//   - .badge        the four moons travel the orbit, spaced evenly
+//   - .steam        steam curls rise and fade
+//   - .float        starbursts drift up and down
+//   - .twinkle      sparkles pulse (shared class from global.css)
+// Everything stops for visitors with "reduce motion" turned on, and the
+// moons park in fixed spots around the orbit instead.
+//
+// Note: moon icons are drawn around (0,0) with no transform attributes,
+// because iOS Safari drops SVG transforms on elements that use offset-path.
+---
+<svg viewBox="0 0 400 260" class="about-art" aria-hidden="true">
+
+  <!-- 2. Moons, BACK copies (drawn before the mug so it covers them) -->
+  <g class="badge back b-run">
+    <circle r="14" fill="#A9BFA4"></circle>
+    <circle cx="-7.5" cy="-7.5" r="2.1" fill="#7D9480"></circle><circle cx="8.4" cy="7.5" r="1.5" fill="#7D9480"></circle>
+    <path d="M0,-14 A14,14 0 0 1 0,14 A9.8,14 0 0 0 0,-14 Z" fill="#2A2118" opacity="0.12"></path>
+    <circle r="14" fill="none" stroke="#2A2118" stroke-width="2.5"></circle>
+    <path d="M-10,4 L10,4 Q11,0 7,-1 L2,-2 L-1,-7 L-6,-7 Q-10,-3 -10,4 Z" fill="#C65A3A" stroke="#2A2118" stroke-width="1.8" stroke-linejoin="round"></path>
+    <path d="M-11,6 H11" stroke="#2A2118" stroke-width="2.5" stroke-linecap="round"></path>
+  </g>
+  <g class="badge back b-family">
+    <circle r="16.5" fill="#D4A23A"></circle>
+    <circle cx="-10.7" cy="-5.8" r="2.1" fill="#B88A2C"></circle><circle cx="9.7" cy="9.7" r="1.7" fill="#B88A2C"></circle>
+    <path d="M0,-16.5 A16.5,16.5 0 0 1 0,16.5 A11.5,16.5 0 0 0 0,-16.5 Z" fill="#2A2118" opacity="0.12"></path>
+    <circle r="16.5" fill="none" stroke="#2A2118" stroke-width="2.5"></circle>
+    <path d="M-9,-1 L0,-9 L9,-1 V9 H-9 Z" fill="#F7EBDB" stroke="#2A2118" stroke-width="1.8" stroke-linejoin="round"></path>
+    <path d="M0,7 C-5,3 -5,-1 -2.5,-1 C-1.2,-1 0,0 0,1 C0,0 1.2,-1 2.5,-1 C5,-1 5,3 0,7 Z" fill="#C65A3A"></path>
+  </g>
+  <g class="badge back b-tech">
+    <circle r="15" fill="#7D9480"></circle>
+    <circle cx="-8.4" cy="8.4" r="1.9" fill="#56684F"></circle><circle cx="9.4" cy="-8.4" r="1.5" fill="#56684F"></circle>
+    <path d="M0,-15 A15,15 0 0 1 0,15 A10.5,15 0 0 0 0,-15 Z" fill="#2A2118" opacity="0.12"></path>
+    <circle r="15" fill="none" stroke="#2A2118" stroke-width="2.5"></circle>
+    <rect x="-8" y="-8" width="16" height="11" rx="1.5" fill="#2F3B33" stroke="#2A2118" stroke-width="1.8"></rect>
+    <path d="M-5,-4 H3 M-5,-1 H1" stroke="#A9BFA4" stroke-width="1.5" stroke-linecap="round"></path>
+    <path d="M-11,5 H11 L9,8 H-9 Z" fill="#EADBC0" stroke="#2A2118" stroke-width="1.8" stroke-linejoin="round"></path>
+  </g>
+  <g class="badge back b-faith">
+    <circle r="18" fill="#F7EBDB"></circle>
+    <circle cx="-10.8" cy="-9.6" r="2.4" fill="#E9DCC6"></circle><circle cx="10.8" cy="10.8" r="1.9" fill="#E9DCC6"></circle>
+    <path d="M0,-18 A18,18 0 0 1 0,18 A12.6,18 0 0 0 0,-18 Z" fill="#2A2118" opacity="0.12"></path>
+    <circle r="18" fill="none" stroke="#2A2118" stroke-width="2.5"></circle>
+    <path d="M-2,-11 H2 V-5 H7 V-1 H2 V11 H-2 V-1 H-7 V-5 H-2 Z" fill="#D4A23A" stroke="#2A2118" stroke-width="1.8" stroke-linejoin="round"></path>
+  </g>
+
+  <!-- 3. Steam rising from the mug -->
+  <g fill="none" stroke="#8C7A5E" stroke-width="4" stroke-linecap="round" opacity="0.55">
+    <path class="steam" d="M176,84 C168,72 184,64 176,50"></path>
+    <path class="steam d2" d="M196,82 C188,68 204,60 196,42"></path>
+    <path class="steam d3" d="M216,84 C208,72 224,64 216,50"></path>
+  </g>
+
+  <!-- 4. The mug -->
+  <!-- Saucer -->
+  <ellipse cx="196" cy="204" rx="72" ry="12" fill="#C9B793" stroke="#2A2118" stroke-width="3"></ellipse>
+  <ellipse cx="196" cy="200" rx="52" ry="7" fill="#EADBC0"></ellipse>
+  <!-- Handle: a thick ink stroke with a terracotta stroke inside it -->
+  <path d="M242,118 C282,114 282,178 242,174" fill="none" stroke="#2A2118" stroke-width="18" stroke-linecap="round"></path>
+  <path d="M242,118 C282,114 282,178 242,174" fill="none" stroke="#C65A3A" stroke-width="11" stroke-linecap="round"></path>
+  <!-- Body -->
+  <path d="M146,96 L246,96 L240,186 Q239,200 224,200 L168,200 Q153,200 152,186 Z" fill="#C65A3A" stroke="#2A2118" stroke-width="3" stroke-linejoin="round"></path>
+  <!-- Side shading -->
+  <path d="M232,100 L244,100 L238,186 Q237,196 228,198 Z" fill="#2A2118" opacity="0.12"></path>
+  <!-- Gold band and a highlight -->
+  <path d="M148,118 L244,118" stroke="#D4A23A" stroke-width="6"></path>
+  <path d="M162,128 L165,176" stroke="#E9DCC6" stroke-width="5" stroke-linecap="round" opacity="0.4"></path>
+  <!-- Logo star on the front -->
+  <path d="M196,134 L200,152 L218,156 L200,160 L196,178 L192,160 L174,156 L192,152 Z" fill="#F7EBDB" stroke="#2A2118" stroke-width="2.5" stroke-linejoin="round"></path>
+  <!-- Rim and coffee -->
+  <ellipse cx="196" cy="96" rx="50" ry="10" fill="#EADBC0" stroke="#2A2118" stroke-width="3"></ellipse>
+  <ellipse cx="196" cy="97" rx="41" ry="6" fill="#5A3D2B"></ellipse>
+  <path d="M176,96 Q186,93 194,95" fill="none" stroke="#C9B793" stroke-width="2" stroke-linecap="round" opacity="0.7"></path>
+
+  <!-- 6. Moons, FRONT copies (same artwork, except the shoe faces left) -->
+  <g class="badge front b-run">
+    <circle r="14" fill="#A9BFA4"></circle>
+    <circle cx="-7.5" cy="-7.5" r="2.1" fill="#7D9480"></circle><circle cx="8.4" cy="7.5" r="1.5" fill="#7D9480"></circle>
+    <path d="M0,-14 A14,14 0 0 1 0,14 A9.8,14 0 0 0 0,-14 Z" fill="#2A2118" opacity="0.12"></path>
+    <circle r="14" fill="none" stroke="#2A2118" stroke-width="2.5"></circle>
+    <path d="M10,4 L-10,4 Q-11,0 -7,-1 L-2,-2 L1,-7 L6,-7 Q10,-3 10,4 Z" fill="#C65A3A" stroke="#2A2118" stroke-width="1.8" stroke-linejoin="round"></path>
+    <path d="M-11,6 H11" stroke="#2A2118" stroke-width="2.5" stroke-linecap="round"></path>
+  </g>
+  <g class="badge front b-family">
+    <circle r="16.5" fill="#D4A23A"></circle>
+    <circle cx="-10.7" cy="-5.8" r="2.1" fill="#B88A2C"></circle><circle cx="9.7" cy="9.7" r="1.7" fill="#B88A2C"></circle>
+    <path d="M0,-16.5 A16.5,16.5 0 0 1 0,16.5 A11.5,16.5 0 0 0 0,-16.5 Z" fill="#2A2118" opacity="0.12"></path>
+    <circle r="16.5" fill="none" stroke="#2A2118" stroke-width="2.5"></circle>
+    <path d="M-9,-1 L0,-9 L9,-1 V9 H-9 Z" fill="#F7EBDB" stroke="#2A2118" stroke-width="1.8" stroke-linejoin="round"></path>
+    <path d="M0,7 C-5,3 -5,-1 -2.5,-1 C-1.2,-1 0,0 0,1 C0,0 1.2,-1 2.5,-1 C5,-1 5,3 0,7 Z" fill="#C65A3A"></path>
+  </g>
+  <g class="badge front b-tech">
+    <circle r="15" fill="#7D9480"></circle>
+    <circle cx="-8.4" cy="8.4" r="1.9" fill="#56684F"></circle><circle cx="9.4" cy="-8.4" r="1.5" fill="#56684F"></circle>
+    <path d="M0,-15 A15,15 0 0 1 0,15 A10.5,15 0 0 0 0,-15 Z" fill="#2A2118" opacity="0.12"></path>
+    <circle r="15" fill="none" stroke="#2A2118" stroke-width="2.5"></circle>
+    <rect x="-8" y="-8" width="16" height="11" rx="1.5" fill="#2F3B33" stroke="#2A2118" stroke-width="1.8"></rect>
+    <path d="M-5,-4 H3 M-5,-1 H1" stroke="#A9BFA4" stroke-width="1.5" stroke-linecap="round"></path>
+    <path d="M-11,5 H11 L9,8 H-9 Z" fill="#EADBC0" stroke="#2A2118" stroke-width="1.8" stroke-linejoin="round"></path>
+  </g>
+  <g class="badge front b-faith">
+    <circle r="18" fill="#F7EBDB"></circle>
+    <circle cx="-10.8" cy="-9.6" r="2.4" fill="#E9DCC6"></circle><circle cx="10.8" cy="10.8" r="1.9" fill="#E9DCC6"></circle>
+    <path d="M0,-18 A18,18 0 0 1 0,18 A12.6,18 0 0 0 0,-18 Z" fill="#2A2118" opacity="0.12"></path>
+    <circle r="18" fill="none" stroke="#2A2118" stroke-width="2.5"></circle>
+    <path d="M-2,-11 H2 V-5 H7 V-1 H2 V11 H-2 V-1 H-7 V-5 H-2 Z" fill="#D4A23A" stroke="#2A2118" stroke-width="1.8" stroke-linejoin="round"></path>
+  </g>
+
+  <!-- 7. Floating starbursts -->
+  <g class="float">
+    <path d="M0,-40 L6,-14 L28,-28 L14,-6 L40,0 L14,6 L28,28 L6,14 L0,40 L-6,14 L-28,28 L-14,6 L-40,0 L-14,-6 L-28,-28 L-6,-14 Z" transform="translate(92,44) scale(0.36)" fill="#E9DCC6" stroke="#2A2118" stroke-width="4" stroke-linejoin="round"></path>
+  </g>
+  <g class="float d2">
+    <path d="M0,-40 L6,-14 L28,-28 L14,-6 L40,0 L14,6 L28,28 L6,14 L0,40 L-6,14 L-28,28 L-14,6 L-40,0 L-14,-6 L-28,-28 L-6,-14 Z" transform="translate(338,228) scale(0.28)" fill="#A9BFA4" stroke="#2A2118" stroke-width="5" stroke-linejoin="round"></path>
+  </g>
+
+  <!-- 8. Twinkling sparkles -->
+  <g transform="translate(320,40) scale(0.42)"><path class="twinkle" d="M0,-40 L5,-5 L40,0 L5,5 L0,40 L-5,5 L-40,0 L-5,-5 Z" fill="#D4A23A"></path></g>
+  <g transform="translate(50,214) scale(0.25)"><path class="twinkle d2" d="M0,-40 L5,-5 L40,0 L5,5 L0,40 L-5,5 L-40,0 L-5,-5 Z" fill="#C65A3A"></path></g>
+  <g transform="translate(262,30) scale(0.18)"><path class="twinkle d3" d="M0,-40 L5,-5 L40,0 L5,5 L0,40 L-5,5 L-40,0 L-5,-5 Z" fill="#56684F"></path></g>
+</svg>
+
+<style>
+  .about-art { width: 100%; max-width: 420px; height: auto; overflow: visible; }
+
+  /* ---------- Moons traveling the orbit ----------
+     The track is the orbit: front half first (0% to 50%),
+     then the back half (50% to 100%).
+     One loop takes 45s. Four moons spaced 11.25s apart (45 / 4)
+     sit evenly around the orbit. Keep every 45s matched. */
+  .badge {
+    offset-path: path('M357.6,112.2 A160,66 -10 0 1 42.4,167.8 A160,66 -10 0 1 357.6,112.2');
+    offset-rotate: 0deg;
+  }
+  .badge.back  { animation: orbit-track 45s linear infinite, orbit-back 45s linear infinite; }
+  .badge.front { animation: orbit-track 45s linear infinite, orbit-front 45s linear infinite; }
+
+  /* Two classes each, and placed after the rules above, so these delays
+     win over the animation shorthand (which would reset them to 0s). */
+  .badge.b-run    { animation-delay: 0s; }
+  .badge.b-family { animation-delay: -11.25s; }
+  .badge.b-tech   { animation-delay: -22.5s; }
+  .badge.b-faith  { animation-delay: -33.75s; }
+
+  @keyframes orbit-track {
+    from { offset-distance: 0%; }
+    to   { offset-distance: 100%; }
+  }
+  @keyframes orbit-back {
+    0%, 49.9%   { opacity: 0; }
+    50%, 100%   { opacity: 1; }
+  }
+  @keyframes orbit-front {
+    0%, 49.9%   { opacity: 1; }
+    50%, 100%   { opacity: 0; }
+  }
+
+  /* ---------- Steam ---------- */
+  @keyframes steam {
+    0%   { transform: translateY(6px);  opacity: 0; }
+    35%  { opacity: 1; }
+    100% { transform: translateY(-10px); opacity: 0; }
+  }
+  .steam { animation: steam 5s ease-in-out infinite; }
+  .steam.d2 { animation-delay: -1.7s; }
+  .steam.d3 { animation-delay: -3.4s; }
+
+  /* ---------- Floating starbursts ---------- */
+  @keyframes float {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50%      { transform: translateY(-8px) rotate(10deg); }
+  }
+  .float {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: float 8.5s ease-in-out infinite;
+  }
+  .float.d2 { animation-duration: 10.5s; animation-delay: -3s; }
+
+  /* ---------- Respect reduced motion ----------
+     Park three moons on the front of the orbit and one on the
+     back half near its end, where the mug doesn't cover it. */
+  @media (prefers-reduced-motion: reduce) {
+    .badge, .steam, .float { animation: none; }
+    .steam { opacity: 0.8; }
+    .b-run    { offset-distance: 10%; }
+    .b-family { offset-distance: 27%; }
+    .b-tech   { offset-distance: 44%; }
+    .b-faith  { offset-distance: 92%; }
+    .front.b-run, .front.b-family, .front.b-tech { opacity: 1; }
+    .back.b-run,  .back.b-family,  .back.b-tech  { opacity: 0; }
+    .front.b-faith { opacity: 0; }
+    .back.b-faith  { opacity: 1; }
+  }
+</style>
