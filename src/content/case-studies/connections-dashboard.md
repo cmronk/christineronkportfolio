@@ -1,7 +1,7 @@
 ---
 title: "Connections Dashboard"
 summary: "My first dashboard: one view of every connection request across our campuses, so staff could see how fast new people were reached, which connectors needed help, and how this year compared to last. The team still reviews it together every week, and a similar feature was later added to core Rock."
-category: "Data & Reporting"
+category: "Data"
 tools: ["Rock RMS", "SQL", "Lava"]
 stats:
   - value: "84%"
@@ -10,7 +10,7 @@ stats:
     label: "Reviewed together by the team, three years in"
   - value: "Core Rock"
     label: "A similar feature later shipped in Rock itself"
-order: 2
+order: 1
 featured: true
 draft: false
 illustration: "connections"

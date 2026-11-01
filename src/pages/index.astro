@@ -15,8 +15,8 @@ const featured = studies.find((s) => s.data.featured) ?? studies[0];
 const articles = (await getArticles()).slice(0, 2);
 
 const categories = [
-  { name: 'Systems & Integrations', blurb: 'Connecting the pieces.', color: 'var(--sage)', icon: 'network' },
-  { name: 'Data & Reporting', blurb: 'Turning data into insight.', color: 'var(--mustard)', icon: 'bars' },
+  { name: 'Systems', blurb: 'Connecting the pieces.', color: 'var(--sage)', icon: 'network' },
+  { name: 'Data', blurb: 'Turning data into insight.', color: 'var(--mustard)', icon: 'bars' },
   { name: 'Development', blurb: 'Building useful things.', color: 'var(--terracotta-soft)', icon: 'code' },
 ];
 ---

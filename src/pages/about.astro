@@ -1,28 +1,180 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import WorkArt from '../components/WorkArt.astro';
 import AboutArt from '../components/AboutArt.astro';
+import Star from '../components/Star.astro';
+
+// Same three areas as the business card, homepage tiles, and work filters
+const areas = [
+  {
+    title: 'Systems',
+    tagline: 'Connecting the pieces.',
+    text: 'Servers, infrastructure, and the tools that tie them together, set up so the people using them barely have to think about it.',
+    color: 'var(--sage)',
+  },
+  {
+    title: 'Data',
+    tagline: 'Turning data into insight.',
+    text: 'Databases, schemas, and reporting that help people see what is actually happening and decide what to do next.',
+    color: 'var(--mustard)',
+  },
+  {
+    title: 'Development',
+    tagline: 'Building useful things.',
+    text: 'Applications, websites, and internal tools built around the way people really work.',
+    color: 'var(--terracotta-soft)',
+  },
+];
+
+const skills = [
+  'Application development',
+  'Databases & data schemas',
+  'Systems & infrastructure',
+  'Integrations & reporting',
+  'Process improvement',
+];
 ---
 
 <BaseLayout title="About" description="Systems thinker. Problem solver. Technology human.">
+
+  <!-- INTRO -->
   <section class="section container intro">
     <div class="copy">
       <p class="eyebrow">About</p>
       <h1>Systems thinker. Problem solver. Technology human.</h1>
-      <p class="lede">I'm a technologist with a background in systems, data, and integrations. I care about building solutions that are reliable, useful, and designed with people in mind.</p>
+      <p class="lede">
+        I'm a technologist working across systems, data, and development.
+        I like understanding how things work, finding where they could work
+        better, and building solutions that make people's work a little easier.
+      </p>
     </div>
     <div class="art"><AboutArt /></div>
   </section>
 
-  
+  <!-- WHAT I DO -->
+  <section class="section--border">
+    <div class="container areas">
+      {areas.map((a) => (
+        <div class="area" style={`--accent: ${a.color}`}>
+          <Star size={22} color="var(--ink)" />
+          <h2>{a.title}</h2>
+          <p class="tagline">{a.tagline}</p>
+          <p>{a.text}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- BACKGROUND -->
+  <section class="section section--tint">
+    <div class="container about-content">
+      <div class="prose">
+        <p class="eyebrow">The path so far</p>
+        <h2>A little bit of everything.</h2>
+
+        <p>
+          Over the past eight years, I've worked across a few different corners
+          of the tech world. I started with a coding bootcamp, moved into a
+          software startup building custom ERP solutions for window and door
+          dealerships, and eventually found my way into the nonprofit sector.
+        </p>
+
+        <p>
+          Along the way, I've worked with a little bit of everything:
+          application development, databases and data schemas, server
+          infrastructure, integrations, and the systems that connect it all.
+        </p>
+
+        <p>
+          What I enjoy most is working where <strong>technology meets people</strong>:
+          taking a complicated process, understanding what's happening behind
+          the scenes, and finding practical ways to make it work better.
+        </p>
+
+        <p>
+          I'm also interested in how data helps people make better decisions.
+          Technology isn't useful just because it's impressive. It's useful when
+          it helps someone do their job, understand something more clearly, or
+          spend less time fighting their tools.
+        </p>
+      </div>
+
+      <aside class="about-aside">
+        <p class="eyebrow">A few things I've worked with</p>
+        <ul class="pill-list">
+          {skills.map((s) => <li>{s}</li>)}
+        </ul>
+        <a href="/work/" class="aside-link">See the case studies →</a>
+      </aside>
+    </div>
+  </section>
+
+  <!-- OUTSIDE OF WORK -->
+  <section class="section container outside">
+    <div class="prose">
+      <p class="eyebrow">Outside the terminal</p>
+      <h2>Other things that make me, me.</h2>
+      <p>
+        Outside of work, I'm usually running, spending time with my family,
+        or finding another excuse to work a little retro-futurism into something.
+      </p>
+      <p>
+        I have a soft spot for space-age design, vintage fashion, and the
+        idea that the future should probably have more interesting typography.
+      </p>
+      <p>
+        I've also completed a marathon, which taught me a thing or two about
+        patience, consistency, and occasionally questioning my own
+        decision-making.
+      </p>
+    </div>
+  </section>
+
 </BaseLayout>
 
 <style>
+  /* ---------- Intro ---------- */
   .intro { display: flex; flex-wrap: wrap; gap: 48px; align-items: center; }
-  .copy { flex: 1 1 420px; min-width: 0; }
-  .copy .eyebrow { margin-bottom: 16px; }
-  h1 { font-size: clamp(38px, 5vw, 60px); margin-bottom: 24px; }
-  .lede { font-size: 19px; color: var(--ink-soft); margin: 0; max-width: 560px; }
+  .copy { flex: 1 1 420px; min-width: 0; display: flex; flex-direction: column; gap: 18px; align-items: flex-start; }
+  .copy .eyebrow { margin: 0; }
+  h1 { font-size: clamp(38px, 5vw, 60px); margin: 0; }
+  .lede { font-size: 18px; color: var(--ink-soft); margin: 0; max-width: 560px; }
   .art { flex: 1 1 340px; min-width: 0; display: flex; justify-content: center; }
   .art :global(.hero-art) { max-width: 420px; }
+
+  h2 { font-size: clamp(28px, 3vw, 40px); margin: 0 0 24px; }
+
+  /* ---------- What I do: matches the case study overview strip ---------- */
+  .areas {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 32px;
+    padding-top: 48px;
+    padding-bottom: 48px;
+  }
+  .area { border-top: 4px solid var(--accent); padding-top: 20px; }
+  .area h2 { font-size: 24px; margin: 10px 0 4px; }
+  .area .tagline { margin: 0 0 8px; font-weight: 600; color: var(--ink); }
+  .area p { margin: 0; font-size: 15px; color: var(--ink-soft); }
+
+  /* ---------- Background ---------- */
+  .about-content { display: flex; flex-wrap: wrap; gap: 48px; align-items: flex-start; }
+  .prose { flex: 2 1 480px; min-width: 0; max-width: 720px; }
+  .prose p { line-height: 1.8; }
+
+  /* Same card treatment as the case study quote */
+  .about-aside {
+    flex: 1 1 260px;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 28px;
+    position: sticky;
+    top: 24px;
+  }
+  .about-aside .eyebrow { margin: 0 0 16px; }
+  .aside-link { display: inline-block; margin-top: 20px; font-size: 15px; color: var(--ink); }
+
+  @media (max-width: 800px) {
+    .about-aside { position: static; }
+  }
 </style>

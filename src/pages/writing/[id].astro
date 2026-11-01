@@ -1,9 +1,14 @@
 ---
 // One page is generated for every Markdown file in src/content/articles/.
+//
+// Sidebar: if an article has a `pullQuote` in its frontmatter, it shows in the
+// same space-themed card used on case studies, beside the article.
+// Without one, the article just takes the full reading width.
 import { render } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ArticleCard from '../../components/ArticleCard.astro';
 import ArticleArt from '../../components/ArticleArt.astro';
+import QuoteCard from '../../components/QuoteCard.astro';
 import { getArticles, formatDate } from '../../lib/content';
 
 export async function getStaticPaths() {
@@ -15,7 +20,7 @@ export async function getStaticPaths() {
 }
 
 const { article, index, more } = Astro.props;
-const { title, summary, date, readTime, tags } = article.data;
+const { title, summary, date, readTime, tags, pullQuote, pullQuoteBy } = article.data;
 const { Content } = await render(article);
 ---
 <BaseLayout title={title} description={summary}>
@@ -27,11 +32,11 @@ const { Content } = await render(article);
         <p class="meta">{formatDate(date)}{readTime && ` · ${readTime}`}</p>
         {tags.length > 0 && <ul class="pill-list">{tags.map((t) => <li>{t}</li>)}</ul>}
       </div>
-         
-    <div class="head-art"><ArticleArt art={article.data.art} variant={index} /></div>
+      <div class="head-art"><ArticleArt art={article.data.art} variant={index} /></div>
     </header>
-    <div class="container">
+    <div class="container body">
       <div class="prose"><Content /></div>
+      {pullQuote && <QuoteCard quote={pullQuote} by={pullQuoteBy} />}
     </div>
   </article>
 
@@ -52,6 +57,12 @@ const { Content } = await render(article);
   .back { font-size: 14px; color: var(--ink-soft); text-decoration: none; }
   h1 { font-size: clamp(36px, 5vw, 56px); }
   .meta { margin: 0; color: var(--ink-soft); font-size: 15px; }
+
+  /* Article beside the optional quote card. The prose keeps a comfortable
+     reading width, and the card wraps below it on smaller screens. */
+  .body { display: flex; flex-wrap: wrap; gap: 48px; align-items: flex-start; }
+  .prose { flex: 2 1 480px; min-width: 0; max-width: 760px; }
+
   .more-title { font-size: 32px; margin-bottom: 24px; }
   .more { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 360px)); gap: 24px; }
 </style>

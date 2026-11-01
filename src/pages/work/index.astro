@@ -7,7 +7,7 @@ import { getCaseStudies, getSites } from '../../lib/content';
 
 const studies = await getCaseStudies();
 const sites = await getSites();
-const categories = ['All', 'Systems & Integrations', 'Data & Reporting', 'Development'];
+const categories = ['All', 'Systems', 'Data', 'Development'];
 
 // Selected sites carousel is hidden for now. Flip to true to bring it back.
 const showSites = false;
@@ -38,36 +38,6 @@ const showSites = false;
       <p class="empty muted" data-empty hidden>Nothing in this category yet. More coming soon.</p>
     </div>
   </section>
-
-  {showSites && sites.length > 0 && (
-    <section class="section section--tint">
-      <div class="container">
-        <div class="section-head">
-          <div>
-            <p class="eyebrow">Websites</p>
-            <h2 class="section-title">Selected sites</h2>
-          </div>
-          <p>Sites I've designed and built for organizations and businesses. Most have since been redesigned, so these show them as they were when I built them.</p>
-        </div>
-        <div class="carousel" data-carousel data-reveal>
-          <div class="carousel-bar">
-            <p class="carousel-count muted" aria-live="polite"><span data-count>1</span> of {sites.length}</p>
-            <div class="carousel-nav">
-              <button type="button" class="nav-btn" data-prev aria-label="Previous site">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"></path></svg>
-              </button>
-              <button type="button" class="nav-btn" data-next aria-label="Next site">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg>
-              </button>
-            </div>
-          </div>
-          <ul class="track" data-track tabindex="0" aria-label="Selected sites. Scroll sideways or use the arrow buttons.">
-            {sites.map((s, i) => <li class="slide"><SiteCard site={s} variant={i} /></li>)}
-          </ul>
-        </div>
-      </div>
-    </section>
-  )}
 </BaseLayout>
 
 <style>

@@ -1,0 +1,199 @@
+---
+// Sidebar illustration: a traveler climbs a winding trail up a mountain,
+// stopping at each checkpoint along the way. Each checkpoint lights up as
+// it's reached, and a flag rises at the summit when the journey is complete.
+// Used on the Devotional Engagement Dashboard case study: every study is a
+// journey, and the dashboard shows who's on the trail and who reaches the top.
+//
+// Props:
+//   steps    how many checkpoints (days) before the summit (default 5)
+//   caption  line under the drawing
+//
+// It starts when it scrolls into view, plays once, and "Replay" runs it again.
+// Visitors with reduced motion see the finished journey right away.
+//
+// Note: the traveler and checkpoints are placed from the script using the
+// trail's own shape, so they stay on the path if you redraw it.
+interface Props { steps?: number; caption?: string; }
+const {
+  steps = 5,
+  caption = 'Every study is a journey. The dashboard shows who’s on the trail, where people stop, and who reaches the top.',
+} = Astro.props;
+const STAR = 'M0,-40 L5,-5 L40,0 L5,5 L0,40 L-5,5 L-40,0 L-5,-5 Z';
+---
+<figure class="journey" data-journey data-steps={steps}>
+  <svg viewBox="0 0 240 236" aria-hidden="true">
+    <!-- Backdrop -->
+    <circle cx="120" cy="122" r="100" fill="#E9DCC6"></circle>
+
+    <!-- Back ridge -->
+    <path d="M14,206 L78,108 L112,150 L162,96 L228,206 Z" fill="#A9BFA4" stroke="#2A2118" stroke-width="2.5" stroke-linejoin="round"></path>
+
+    <!-- Main mountain, with a shaded side and a snow cap -->
+    <path d="M28,206 L120,50 L212,206 Z" fill="#56684F" stroke="#2A2118" stroke-width="3" stroke-linejoin="round"></path>
+    <path d="M120,50 L212,206 L150,206 Z" fill="#2A2118" opacity="0.14"></path>
+    <path d="M120,50 L103,79 L112,74 L120,83 L128,74 L137,79 Z" fill="#F7EBDB" stroke="#2A2118" stroke-width="2.5" stroke-linejoin="round"></path>
+
+    <!-- Ground line -->
+    <path d="M10,206 H230" stroke="#2A2118" stroke-width="3" stroke-linecap="round"></path>
+
+    <!-- The trail: switchbacks from the base to the summit -->
+    <path class="trail" d="M66,204 C110,200 156,194 152,180 C148,166 96,170 98,152 C100,134 146,140 140,120 C135,104 110,108 114,92 C117,80 119,68 120,56"
+          fill="none" stroke="#EADBC0" stroke-width="3" stroke-linecap="round" stroke-dasharray="4 5"></path>
+
+    <!-- Checkpoints, placed along the trail by the script -->
+    <g class="checkpoints">
+      {Array.from({ length: steps }).map(() => (
+        <circle class="cp" r="5" fill="#EADBC0" stroke="#2A2118" stroke-width="2"></circle>
+      ))}
+    </g>
+
+    <!-- Summit flag: the pole is always there, the flag rises at the end -->
+    <path d="M120,52 V24" stroke="#2A2118" stroke-width="2.5" stroke-linecap="round"></path>
+    <g class="flag">
+      <path d="M121,25 L142,31 L121,38 Z" fill="#C65A3A" stroke="#2A2118" stroke-width="2" stroke-linejoin="round"></path>
+    </g>
+
+    <!-- The traveler: a gold dot with a soft halo -->
+    <g class="traveler" transform="translate(66,204)">
+      <circle r="10" fill="#D4A23A" opacity="0.3"></circle>
+      <circle r="5.5" fill="#D4A23A" stroke="#2A2118" stroke-width="2"></circle>
+    </g>
+
+    <!-- Sparkles -->
+    <g class="summit-spark" transform="translate(152,22) scale(0.26)"><path d={STAR} fill="#D4A23A"></path></g>
+    <g transform="translate(30,58) scale(0.28)"><path class="twinkle" d={STAR} fill="#D4A23A"></path></g>
+    <g transform="translate(214,70) scale(0.2)"><path class="twinkle d2" d={STAR} fill="#C65A3A"></path></g>
+  </svg>
+
+  <div class="status" aria-hidden="true">
+    <span class="kicker" data-kicker>Study</span>
+    <span class="day" data-day>Complete</span>
+  </div>
+  <figcaption>
+    {caption}
+    <button type="button" class="replay" data-replay>Replay</button>
+  </figcaption>
+</figure>
+
+<style>
+  .journey { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center; }
+  .journey svg { width: 100%; max-width: 260px; height: auto; overflow: visible; }
+
+  .status { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+  .kicker { font-size: 13px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--sage, #56684F); font-weight: 600; }
+  .day { font-family: var(--font-display); font-size: 36px; line-height: 1.05; color: var(--terracotta); }
+
+  figcaption { font-size: 14px; color: var(--ink-soft); max-width: 30ch; line-height: 1.5; }
+  .replay {
+    font: inherit; font-size: 14px; background: none; border: 0; padding: 0; margin-left: 4px;
+    color: var(--terracotta); text-decoration: underline; cursor: pointer;
+  }
+
+  /* Checkpoints light up gold once reached */
+  .cp { transition: fill .35s ease, transform .45s cubic-bezier(.34, 1.56, .64, 1); transform-box: fill-box; transform-origin: center; }
+  .cp.reached { fill: #D4A23A; transform: scale(1.25); }
+
+  /* Flag rises up the pole, then waves gently */
+  .flag { transform: translateY(22px) scaleY(.2); transform-box: fill-box; transform-origin: left bottom; opacity: 0; transition: transform .6s cubic-bezier(.34, 1.56, .64, 1), opacity .3s ease; }
+  .journey.done .flag { transform: none; opacity: 1; }
+  .journey.done .flag path { animation: wave 2.6s ease-in-out infinite; transform-box: fill-box; transform-origin: left center; }
+  @keyframes wave { 0%, 100% { transform: skewY(0deg); } 50% { transform: skewY(-6deg); } }
+
+  .summit-spark { opacity: 0; transition: opacity .4s ease .2s; }
+  .journey.done .summit-spark { opacity: 1; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cp, .flag, .summit-spark { transition: none; }
+    .journey.done .flag path { animation: none; }
+  }
+</style>
+
+<script>
+  const ease = (t: number) => (t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2);
+  const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+  document.querySelectorAll<HTMLElement>('[data-journey]').forEach((el) => {
+    const steps = Number(el.dataset.steps) || 5;
+    const trail = el.querySelector<SVGPathElement>('.trail')!;
+    const traveler = el.querySelector<SVGGElement>('.traveler')!;
+    const cps = [...el.querySelectorAll<SVGCircleElement>('.cp')];
+    const kicker = el.querySelector<HTMLElement>('[data-kicker]')!;
+    const day = el.querySelector<HTMLElement>('[data-day]')!;
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const len = trail.getTotalLength();
+    let run = 0;
+
+    // Checkpoints spread evenly along the trail, leaving room before the summit
+    const stops = cps.map((_, i) => 0.08 + (i / Math.max(1, steps - 1)) * 0.76);
+    cps.forEach((cp, i) => {
+      const pt = trail.getPointAtLength(stops[i] * len);
+      cp.setAttribute('cx', pt.x.toFixed(1));
+      cp.setAttribute('cy', pt.y.toFixed(1));
+    });
+
+    const place = (p: number) => {
+      const pt = trail.getPointAtLength(p * len);
+      traveler.setAttribute('transform', `translate(${pt.x.toFixed(1)},${pt.y.toFixed(1)})`);
+    };
+
+    // Walk from one point on the trail to another; longer stretches take longer
+    function walk(from: number, to: number, id: number) {
+      const ms = 500 + (to - from) * 2600;
+      return new Promise<void>((resolve) => {
+        const start = performance.now();
+        const step = (now: number) => {
+          if (id !== run) return resolve();
+          const t = Math.min(1, (now - start) / ms);
+          place(from + (to - from) * ease(t));
+          if (t < 1) requestAnimationFrame(step); else resolve();
+        };
+        requestAnimationFrame(step);
+      });
+    }
+
+    function reset() {
+      el.classList.remove('done');
+      cps.forEach((cp) => cp.classList.remove('reached'));
+      place(0);
+      kicker.textContent = 'Day';
+      day.textContent = 'Starting';
+    }
+
+    function finish() {
+      cps.forEach((cp) => cp.classList.add('reached'));
+      place(1);
+      el.classList.add('done');
+      kicker.textContent = 'Study';
+      day.textContent = 'Complete';
+    }
+
+    async function play() {
+      const id = ++run;
+      reset();
+      await wait(400);
+      let at = 0;
+      for (let i = 0; i < stops.length; i++) {
+        await walk(at, stops[i], id);
+        if (id !== run) return;
+        at = stops[i];
+        cps[i].classList.add('reached');
+        kicker.textContent = 'Day';
+        day.textContent = `${i + 1} of ${steps}`;
+        await wait(450);
+      }
+      await walk(at, 1, id);
+      if (id !== run) return;
+      finish();
+    }
+
+    finish();
+    if (!reduce) {
+      const io = new IntersectionObserver((entries) => {
+        if (entries.some((e) => e.isIntersecting)) { play(); io.disconnect(); }
+      }, { threshold: 0.5 });
+      io.observe(el);
+    }
+    el.querySelector('[data-replay]')?.addEventListener('click', () => { if (reduce) { run++; finish(); } else play(); });
+  });
+</script>

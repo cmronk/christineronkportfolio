@@ -9,8 +9,8 @@ interface Props { study: CollectionEntry<'caseStudies'> }
 const { study } = Astro.props;
 const { title, summary, category, tools, draft, poster, illustration } = study.data;
 const colors: Record<string, string> = {
-  'Systems & Integrations': 'var(--sage)',
-  'Data & Reporting': 'var(--mustard)',
+  'Systems': 'var(--sage)',
+  'Data': 'var(--mustard)',
   'Development': 'var(--terracotta-soft)',
 };
 // Card visual, in order: the case study's illustration, then its poster image,

@@ -1,16 +1,13 @@
 ---
 title: "Role-Based Workspaces"
 summary: "I redesigned our internal Rock RMS homepage so each staff role lands on a workspace built around their actual work: the metrics, tasks, and tools they need, without digging."
-category: "Systems & Integrations"
+category: "Systems"
 tools: ["Rock RMS", "Lava", "Rock Security", "Dashboards"]
-problem: "The staff homepage hadn't been meaningfully updated since 2018. Links were added one request at a time, dashboard tiles were hard to read, and every role saw the same page whether it was relevant or not."
-approach: "I rebuilt the homepage around what staff need daily: campus metrics with year-over-year context, upcoming events, common actions, and role-based workspaces that group each team's tools in one place."
-decisions: "Workspaces appear only for the roles that use them, using Rock security, so the page stays focused as it grows. Every tile leads to a task, not just a report."
-result: "Staff feedback has been strongly positive, and questions about where to find things dropped noticeably, especially from campus pastors and the Community Life team."
 quote: "The goal wasn't a prettier homepage. It was a page that answers 'what do I need today?' for every person who opens it."
 featured: false
 illustration: "before-after"
-order: 1
+poster: "/images/beforeafter.png"
+order: 20
 # Blur internal numbers, names, and event details before adding these.
 # beforeImage: "/images/workspaces/before.png"
 # afterImage: "/images/workspaces/after.png"

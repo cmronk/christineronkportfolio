@@ -15,6 +15,9 @@ const articles = defineCollection({
     tags: z.array(z.string()).default([]),
     // Card illustration. Add new motifs in src/components/ArticleArt.astro, then list them here.
     art: z.enum(['planet', 'clock', 'lightbulb', 'books', 'gears', 'sprout']).default('planet'),
+    // Optional pull quote, shown beside the article in the space-themed quote card.
+    pullQuote: z.string().optional(),
+    pullQuoteBy: z.string().optional(), // attribution, if it's someone else's words
     featured: z.boolean().default(false), // shows as "Latest essay" style highlight
     draft: z.boolean().default(false), // drafts show in `npm run dev` but not in the live site
   }),
@@ -25,7 +28,7 @@ const caseStudies = defineCollection({
   schema: z.object({
     title: z.string(),
     summary: z.string(),
-    category: z.enum(['Systems & Integrations', 'Data & Reporting', 'Development']),
+    category: z.enum(['Systems', 'Data', 'Development']),
     tools: z.array(z.string()).default([]),
     // Big-number strip at the top of each case study (up to three).
     // When a case study has stats, they replace the four-column overview below.
@@ -45,7 +48,7 @@ const caseStudies = defineCollection({
     quote: z.string().optional(),
     // Optional sidebar illustration beside the story, shown when there's no quote.
     // Add more names here as you make more.
-    aside: z.enum(['paper-plane', 'countdown']).optional(),
+    aside: z.enum(['paper-plane', 'journey', 'countdown']).optional(),
     // Optional before/after screenshots for the comparison slider.
     // Put the images in /public/images/ and reference them like "/images/workspaces-before.png".
     beforeImage: z.string().optional(),
@@ -62,22 +65,5 @@ const caseStudies = defineCollection({
   }),
 });
 
-// Lighter-weight "Selected sites" gallery on the Work page.
-// One .md file per site in src/content/sites/. No body text needed.
-const sites = defineCollection({
-  loader: glob({ pattern: '**/*.md', base: './src/content/sites' }),
-  schema: z.object({
-    title: z.string(),
-    year: z.string(), // e.g. "2021" or "2019–2021"
-    role: z.string(), // what you did: "Designed and built", "Built on WordPress", etc.
-    summary: z.string(),
-    tools: z.array(z.string()).default([]),
-    status: z.enum(['Live', 'Since redesigned', 'No longer active']).default('Since redesigned'),
-    image: z.string().optional(), // screenshot in /public/images/sites/
-    link: z.string().optional(), // live site, or a Wayback Machine snapshot if redesigned
-    order: z.number().default(100),
-    draft: z.boolean().default(false),
-  }),
-});
 
-export const collections = { articles, caseStudies, sites };
+export const collections = { articles, caseStudies };

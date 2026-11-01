@@ -6,6 +6,7 @@ readTime: "5 min read"
 tags: [ai, history]
 featured: true
 art: "clock" # planet, clock, lightbulb, books, gears, sprout
+pullQuote: "We can become increasingly productive at doing things without ever stopping to ask whether those things are worth doing."
 ---
 
 

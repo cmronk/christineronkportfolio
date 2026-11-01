@@ -1,14 +1,10 @@
 ---
 title: "Growth Track Manager"
 summary: "I built a tool in Rock RMS that helps campus teams track every person moving through Growth Track, our onboarding process, so fewer people fall through the cracks."
-category: "Systems & Integrations"
+category: "Systems"
 tools: ["Rock RMS", "Lava", "SQL"]
-problem: "After Growth Track, people stalled between steps: a background check never filled out, an interview never scheduled. Staff couldn't see what each person was missing, so they assumed people had lost interest."
-approach: "I spent a few weeks working with our largest campus's Growth Track team, the people who would use it most, and shaped it around their day-to-day follow-up work."
-decisions: "We already had the data in a report, but a report doesn't get used. I turned the same query into cards on a board, then added quick KPIs, a class date filter, actions, and a key so staff could follow up right from each person."
-result: "Our largest campus uses it almost daily, and our smaller campuses began using it in October 2026. Staff can see at a glance who is falling through the cracks."
 quote: "Even if someone doesn't respond, our staff makes sure that everyone who wants to serve and become a member can."
-order: 3
+order: 40
 draft: false
 illustration: "growth-track"
 ---

@@ -6,11 +6,7 @@ tools: ["Rock RMS", "Lava", "Content Channels", "Groups", "Event Calendar"]
 video: "/videos/TFACHomeWalkthrough.mp4"
 poster: "/images/sites/TFACHomeWalkthrough-poster.jpg"
 videoLabel: "Scrolling walkthrough of the TFAC homepage"
-problem: "On TFAC's old site, every new event meant contacting a developer. The team couldn't keep their own site current."
-approach: "I built the full site in Rock, using content channels, groups, and Rock's event calendar to drive most of the pages, then trained the team to manage it."
-decisions: "Events come from Rock's event calendar instead of one-off pages, so the team enters details once and every event displays the same way."
-result: "The TFAC team now adds and updates events on their own. In 2026 I redesigned the site with a cleaner, more modern look."
-order: 3
+order: 50
 draft: false
 
 ---
