@@ -1,16 +1,35 @@
 ---
 import type { CollectionEntry } from 'astro:content';
+import GrowthTrackArt from './GrowthTrackArt.astro';
+import ConnectionsArt from './ConnectionsArt.astro';
+import DevotionalArt from './DevotionalArt.astro';
+import Star from './Star.astro';
 
 interface Props { study: CollectionEntry<'caseStudies'> }
 const { study } = Astro.props;
-const { title, summary, category, tools, draft } = study.data;
+const { title, summary, category, tools, draft, poster, illustration } = study.data;
 const colors: Record<string, string> = {
   'Systems & Integrations': 'var(--sage)',
   'Data & Reporting': 'var(--mustard)',
   'Development': 'var(--terracotta-soft)',
 };
+// Card visual, in order: the case study's illustration, then its poster image,
+// then a simple shape in the category color. 'before-after' is interactive, so
+// it stays on the case study page and the card uses the fallback.
 ---
 <article class="card lift" style={`--accent: ${colors[category]}`} data-category={category}>
+  <div class="visual" aria-hidden="true">
+    {illustration === 'growth-track' ? <div class="art"><GrowthTrackArt /></div>
+      : illustration === 'connections' ? <div class="art"><ConnectionsArt /></div>
+      : illustration === 'devotional' ? <div class="art"><DevotionalArt /></div>
+      : poster ? <img class="thumb" src={poster} alt="" loading="lazy" decoding="async" width="1600" height="1064" />
+      : (
+        <div class="fallback">
+          <span class="planet"></span>
+          <span class="star"><Star size={22} color="var(--ink)" /></span>
+        </div>
+      )}
+  </div>
   <p class="eyebrow small">{draft && <span class="draft">Draft · </span>}{category}</p>
   <h3><a href={`/work/${study.id}/`}>{title}</a></h3>
   <p class="muted">{summary}</p>
@@ -21,6 +40,33 @@ const colors: Record<string, string> = {
 
 <style>
   .card { position: relative; background: var(--paper); border: 1px solid var(--line); border-top: 8px solid var(--accent); border-radius: var(--radius); padding: 28px; display: flex; flex-direction: column; gap: 12px; }
+
+  /* Every card gets the same visual box, so cards in a row line up */
+  .visual {
+    position: relative; aspect-ratio: 16 / 10; margin-bottom: 8px; overflow: hidden;
+    display: grid; place-items: center;
+    border-radius: calc(var(--radius) - 6px); border: 1px solid var(--line);
+    background: var(--cream);
+  }
+
+  /* The header art is drawn for a wide space. Lay it out at 1.6x the card's
+     size, then scale it down to fit, so it shrinks evenly instead of squishing. */
+  .art {
+    --s: 1.6;
+    position: absolute; top: 0; left: 0;
+    width: calc(100% * var(--s)); height: calc(100% * var(--s));
+    transform: scale(calc(1 / var(--s))); transform-origin: top left;
+    display: grid; place-items: center; padding: 4%;
+  }
+  .art > :global(*) { width: 100%; max-height: 100%; }
+  .art :global(svg) { display: block; width: 100%; height: 100%; }
+
+  .thumb { width: 100%; height: 100%; object-fit: cover; object-position: top; }
+
+  .fallback { position: relative; width: 100%; height: 100%; display: grid; place-items: center; }
+  .planet { width: 34%; aspect-ratio: 1; border-radius: 50%; background: var(--accent); }
+  .star { position: absolute; top: 18%; left: 22%; }
+
   .small { margin: 0; font-size: 12px; letter-spacing: 0.16em; }
   .draft { color: var(--rust); }
   h3 { font-size: 26px; }

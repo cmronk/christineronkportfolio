@@ -8,6 +8,9 @@ import { getCaseStudies, getSites } from '../../lib/content';
 const studies = await getCaseStudies();
 const sites = await getSites();
 const categories = ['All', 'Systems & Integrations', 'Data & Reporting', 'Development'];
+
+// Selected sites carousel is hidden for now. Flip to true to bring it back.
+const showSites = false;
 ---
 <BaseLayout title="Work" description="Case studies in systems, data, and development.">
     <section class="section">
@@ -36,7 +39,7 @@ const categories = ['All', 'Systems & Integrations', 'Data & Reporting', 'Develo
     </div>
   </section>
 
-  {sites.length > 0 && (
+  {showSites && sites.length > 0 && (
     <section class="section section--tint">
       <div class="container">
         <div class="section-head">
@@ -72,8 +75,7 @@ const categories = ['All', 'Systems & Integrations', 'Data & Reporting', 'Develo
   .filters { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 32px; }
   .filters button { font: inherit; font-size: 15px; padding: 10px 18px; min-height: 44px; border-radius: 999px; border: 1px solid var(--line-strong); background: var(--paper); color: var(--ink); cursor: pointer; }
   .filters button[aria-pressed='true'] { background: var(--ink); color: var(--cream); border-color: var(--ink); }
-  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; }
-
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 24px; }
   /* Sites carousel: native sideways scrolling that snaps to each card */
   .carousel-bar { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 16px; }
   .carousel-count { margin: 0; font-size: 15px; font-variant-numeric: tabular-nums; }

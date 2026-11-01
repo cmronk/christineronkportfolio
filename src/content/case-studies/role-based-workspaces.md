@@ -9,6 +9,7 @@ decisions: "Workspaces appear only for the roles that use them, using Rock secur
 result: "Staff feedback has been strongly positive, and questions about where to find things dropped noticeably, especially from campus pastors and the Community Life team."
 quote: "The goal wasn't a prettier homepage. It was a page that answers 'what do I need today?' for every person who opens it."
 featured: false
+illustration: "before-after"
 order: 1
 # Blur internal numbers, names, and event details before adding these.
 # beforeImage: "/images/workspaces/before.png"

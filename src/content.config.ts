@@ -52,10 +52,13 @@ const caseStudies = defineCollection({
     afterImage: z.string().optional(),
     // Optional built-in illustration for the top of the case study page,
     // used instead of the before/after slider. Add more names here as you make more.
-    illustration: z.enum(['growth-track', 'devotional', 'connections']).optional(),
+    illustration: z.enum(['growth-track', 'devotional', 'connections', 'before-after']).optional(),
     featured: z.boolean().default(false), // the one shown in the homepage spotlight
     order: z.number().default(100), // lower numbers show first
     draft: z.boolean().default(false),
+    video: z.string().optional(),
+    poster: z.string().optional(),
+    videoLabel: z.string().optional(),
   }),
 });
 
