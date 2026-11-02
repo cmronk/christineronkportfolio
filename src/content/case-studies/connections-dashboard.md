@@ -71,22 +71,22 @@ Each panel is a Dynamic Data block. One set of page filters (campus, date range,
 
 The earliest real activity on each request, measured from when the request was created. System activities like "Assigned" and "Follow-up date reached" don't count as contact.
 
-```sql
+```sql {3-4,8,15}
 WITH FirstContact AS (
   SELECT cr.Id, cr.CampusId,
-    DATEDIFF(day, cr.CreatedDateTime, -- [!code highlight]
-      MIN(cra.CreatedDateTime)) AS DaysToFirst -- [!code highlight]
+    DATEDIFF(day, cr.CreatedDateTime,
+      MIN(cra.CreatedDateTime)) AS DaysToFirst
   FROM ConnectionRequest cr
   JOIN ConnectionRequestActivity cra
     ON cra.ConnectionRequestId = cr.Id
-  WHERE cra.ConnectionActivityTypeId NOT IN (@SystemTypes) -- [!code highlight]
+  WHERE cra.ConnectionActivityTypeId NOT IN (@SystemTypes)
     AND cr.CreatedDateTime BETWEEN @StartDate AND @EndDate
   GROUP BY cr.Id, cr.CampusId, cr.CreatedDateTime
 )
 SELECT CampusId, AVG(DaysToFirst) AS AvgDays
 FROM FirstContact
 GROUP BY CampusId
-ORDER BY AvgDays DESC; -- slowest campus first [!code highlight]
+ORDER BY AvgDays DESC; -- slowest campus first
 ```
 
 ### 02 / One color system
@@ -107,13 +107,13 @@ The thresholds live in one place, so green, yellow, and red mean the same thing 
 
 The same window shifted back a year, with each campus charted in its own Rock campus color.
 
-```sql
+```sql {4-6}
 LastYear AS (
   SELECT cr.CampusId, COUNT(cr.Id) AS LastYearCount
   FROM ConnectionRequest cr
-  WHERE cr.CreatedDateTime -- [!code highlight]
-    BETWEEN DATEADD(year, -1, @StartDate) -- [!code highlight]
-        AND DATEADD(year, -1, @EndDate) -- [!code highlight]
+  WHERE cr.CreatedDateTime
+    BETWEEN DATEADD(year, -1, @StartDate)
+        AND DATEADD(year, -1, @EndDate)
   GROUP BY cr.CampusId
 )
 ```

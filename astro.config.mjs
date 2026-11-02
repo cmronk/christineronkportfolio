@@ -1,6 +1,30 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
-import { transformerNotationHighlight, transformerMetaHighlight } from '@shikijs/transformers';
+
+// Highlight lines in a code block by listing them after the language:
+//   ```sql {3-5}      ```liquid {1,4-6}
+// Highlighted lines get the mustard bar; the rest dim (see global.css).
+// Line numbers count from 1 at the first line inside the block.
+function linesFromMeta(meta = '') {
+  const lines = new Set();
+  const match = meta.match(/\{([\d,\s-]+)\}/);
+  if (!match) return lines;
+  for (const part of match[1].split(',')) {
+    const [start, end = start] = part.trim().split('-').map(Number);
+    for (let n = start; n <= end; n++) lines.add(n);
+  }
+  return lines;
+}
+
+const highlightLines = {
+  name: 'highlight-lines',
+  line(node, lineNumber) {
+    if (linesFromMeta(this.options.meta?.__raw).has(lineNumber)) this.addClassToHast(node, 'highlighted');
+  },
+  pre(node) {
+    if (linesFromMeta(this.options.meta?.__raw).size) this.addClassToHast(node, 'has-highlighted');
+  },
+};
 
 // https://astro.build/config
 export default defineConfig({
@@ -9,15 +33,7 @@ export default defineConfig({
   markdown: {
     shikiConfig: {
       theme: 'github-dark',
-      // Two ways to highlight lines (they get the mustard bar):
-      //   1. SQL: end the line with a comment:  -- [!code highlight]
-      //      The marker isn't shown on the page.
-      //   2. Any language (use this for Lava): list line numbers after the language,
-      //      like ```liquid {2-4}  or  ```liquid {1,3}
-      transformers: [
-        transformerNotationHighlight({ matchAlgorithm: 'v3' }),
-        transformerMetaHighlight(),
-      ],
+      transformers: [highlightLines],
     },
   },
 });

@@ -10,7 +10,6 @@
     "astro": "astro"
   },
   "dependencies": {
-    "@shikijs/transformers": "^4.6.0",
     "astro": "^7.4.2"
   },
   "allowScripts": {

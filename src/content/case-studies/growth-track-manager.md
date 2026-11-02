@@ -61,26 +61,26 @@ One SQL query returns a row per person with every step's status already worked o
 
 Older records store Growth Track in a person attribute; newer ones use a Step. Each person is counted once, and the Step wins.
 
-```sql
+```sql {4,8-10,16,19}
 WITH Combined AS (
   SELECT p.Id AS PersonId,
     CAST(s.CompletedDateTime AS DATE) AS GTDate,
-    1 AS SourcePriority -- [!code highlight]
+    1 AS SourcePriority
   FROM Step s ...
   UNION ALL
   SELECT p.Id,
-    CAST(COALESCE(av.ValueAsDateTime, -- [!code highlight]
-      TRY_CONVERT(datetime, av.Value)) AS DATE), -- [!code highlight]
-    2 -- [!code highlight]
+    CAST(COALESCE(av.ValueAsDateTime,
+      TRY_CONVERT(datetime, av.Value)) AS DATE),
+    2
   FROM AttributeValue av ...
 ),
 Roster AS (
   SELECT * FROM (
     SELECT *, ROW_NUMBER() OVER (
-      PARTITION BY PersonId ORDER BY SourcePriority) AS rn -- [!code highlight]
+      PARTITION BY PersonId ORDER BY SourcePriority) AS rn
     FROM Combined
   ) d
-  WHERE rn = 1 -- [!code highlight]
+  WHERE rn = 1
 )
 ```
 
