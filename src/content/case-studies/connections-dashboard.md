@@ -62,3 +62,70 @@ Rock's team saw it, and a similar feature was later added to core Rock. I've wal
 Rock's version 19 overhaul of connection requests covered much of what my dashboard did. Even through that change, our largest campus is reaching new people in about 3 days, and most campuses are within a week. A couple still aren't where we want them, which is exactly what the weekly review is for.
 
 That shift also freed us to change our focus from making sure staff follow up to making sure people get connected and stay, which led to the [Growth Track Manager](/work/growth-track-manager/).
+<details open class="under-hood">
+<summary>Under the hood</summary>
+
+Each panel is a Dynamic Data block. One set of page filters (campus, date range, and request type) is passed into every block's SQL, so the whole page changes together. Built on Rock v19 with SQL and Lava.
+
+### 01 / Days to first contact
+
+The earliest real activity on each request, measured from when the request was created. System activities like "Assigned" and "Follow-up date reached" don't count as contact.
+
+```sql
+WITH FirstContact AS (
+  SELECT cr.Id, cr.CampusId,
+    DATEDIFF(day, cr.CreatedDateTime, -- [!code highlight]
+      MIN(cra.CreatedDateTime)) AS DaysToFirst -- [!code highlight]
+  FROM ConnectionRequest cr
+  JOIN ConnectionRequestActivity cra
+    ON cra.ConnectionRequestId = cr.Id
+  WHERE cra.ConnectionActivityTypeId NOT IN (@SystemTypes) -- [!code highlight]
+    AND cr.CreatedDateTime BETWEEN @StartDate AND @EndDate
+  GROUP BY cr.Id, cr.CampusId, cr.CreatedDateTime
+)
+SELECT CampusId, AVG(DaysToFirst) AS AvgDays
+FROM FirstContact
+GROUP BY CampusId
+ORDER BY AvgDays DESC; -- slowest campus first [!code highlight]
+```
+
+### 02 / One color system
+
+The thresholds live in one place, so green, yellow, and red mean the same thing on every panel.
+
+```liquid {2-4}
+{% assign days = row.AvgDays | AsInteger %}
+{% if days > 7 %}{% assign color = 'red-500' %}
+{% elsif days > 4 %}{% assign color = 'yellow-500' %}
+{% else %}{% assign color = 'green-500' %}{% endif %}
+
+[[ kpi value:'{{ row.CampusName }}'
+       label:'{{ days }} Days' color:'{{ color }}' ]][[ endkpi ]]
+```
+
+### 03 / This year vs. last
+
+The same window shifted back a year, with each campus charted in its own Rock campus color.
+
+```sql
+LastYear AS (
+  SELECT cr.CampusId, COUNT(cr.Id) AS LastYearCount
+  FROM ConnectionRequest cr
+  WHERE cr.CreatedDateTime -- [!code highlight]
+    BETWEEN DATEADD(year, -1, @StartDate) -- [!code highlight]
+        AND DATEADD(year, -1, @EndDate) -- [!code highlight]
+  GROUP BY cr.CampusId
+)
+```
+
+```liquid {1}
+{% assign fill = campus | Attribute:'CampusColor' %}
+[[ dataset label:'{{ name }}' data:'{{ last }}, {{ current }}'
+           fillcolor:'{{ fill }}' ]][[ enddataset ]]
+```
+
+**Tradeoff.** A request with no activity yet doesn't have a first-contact time, so it's left out of the average. That's why each connector also shows their uncontacted share: a fast average can't hide a long waiting list.
+
+**What I'd change now.** Move the opportunity and campus IDs out of the SQL and into Rock defined values, so another church could drop the dashboard in without editing queries.
+
+</details>

@@ -1,9 +1,13 @@
 ---
+import { getArticles } from '../lib/content';
+
 const path = Astro.url.pathname;
+// Writing only shows in the nav once at least one article is published (not a draft)
+const hasWriting = (await getArticles()).length > 0;
 // The logo links home, so "Home" isn't repeated here
 const links = [
   { href: '/work/', label: 'Work' },
-  { href: '/writing/', label: 'Writing' },
+  ...(hasWriting ? [{ href: '/writing/', label: 'Writing' }] : []),
   { href: '/about/', label: 'About' },
 ];
 const isActive = (href: string) => path.startsWith(href);

@@ -5,6 +5,8 @@ import WritingArt from '../../components/WritingArt.astro';
 import { getArticles } from '../../lib/content';
 
 const articles = await getArticles();
+// No published articles yet: send /writing/ to the homepage instead of showing an empty page
+if (articles.length === 0) return Astro.redirect('/');
 ---
 <BaseLayout title="Writing" description="Essays on technology, history, and the people who use it.">
   <section class="section">

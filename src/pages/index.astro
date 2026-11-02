@@ -95,7 +95,8 @@ const categories = [
     </section>
   )}
 
-  <!-- Writing (newest two articles, pulled automatically) -->
+  <!-- Writing (newest two articles, pulled automatically). Hidden until one is published. -->
+  {articles.length > 0 && (
   <section class="section">
     <div class="container">
       <div class="section-head">
@@ -110,12 +111,13 @@ const categories = [
       </div>
     </div>
   </section>
+  )}
 
   <!-- About teaser -->
   <section class="section section--tint">
     <div class="container about">
       <div>
-        <p class="eyebrow">03 / About</p>
+        <p class="eyebrow">{articles.length > 0 ? '03' : '02'} / About</p>
         <h2>Systems thinker. Problem solver. Technology human.</h2>
       </div>
       <div>
