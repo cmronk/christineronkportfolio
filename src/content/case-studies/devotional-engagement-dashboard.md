@@ -41,3 +41,68 @@ Under the hood, persisted datasets do the heavy lifting. They run the queries ah
 Leaders use the dashboard to see what's actually happening with the app: which studies people start, where they stop, and which topics don't connect. It turned a big investment from a guess into something we can measure and adjust.
 
 I presented the dashboard at a Rock Data Analytics hub, and several churches set up follow-up calls to learn how I built it.
+<details open class="under-hood">
+<summary>Under the hood</summary>
+
+Each study is a content channel item, and each day of the study is a child item. When someone starts a study, Rock creates a group linked to it, and every day they complete is recorded as attendance. Someone has finished a study when they've attended as many days as it has. Built on Rock v19 with SQL, Lava, and persisted datasets.
+
+### 01 / Calculate once, read many times
+
+The query joins groups, members, attendance, and content items for every study anyone has ever started. That's too heavy to run on each page load, so it runs on a schedule as a persisted dataset and saves the result as JSON.
+
+```sql {12-14}
+WITH StudyStructure AS (   -- how many days each study has
+  SELECT cci.Guid AS StudyGuid, COUNT(ccia.Id) AS TotalDays
+  FROM ContentChannelItem cci
+  JOIN ContentChannelItemAssociation ccia
+    ON ccia.ContentChannelItemId = cci.Id
+  GROUP BY cci.Guid
+),
+PersonAttendance AS ( ... ),   -- days each person attended
+GroupStats AS (
+  SELECT pa.StudyGuid,
+    COUNT(DISTINCT pa.PersonId) AS TotalParticipants,
+    COUNT(DISTINCT CASE
+      WHEN pa.DaysAttended >= s.TotalDays
+      THEN pa.PersonId END) AS CompletedAll
+  FROM PersonAttendance pa
+  JOIN StudyStructure s ON s.StudyGuid = pa.StudyGuid
+  GROUP BY pa.StudyGuid
+)
+```
+
+### 02 / One row per group
+
+Each row is one group taking one study. The participant IDs ride along with the totals, so the drilldown can list the actual people without a second query.
+
+```json {8-9}
+{
+  "StudyTitle": "Knowing God's Will",
+  "Category": "Kingdom Living",
+  "CampusId": 2,
+  "Format": "Group",
+  "TotalDays": 11,
+  "TotalParticipants": 3,
+  "PersonIds": "101,102,103",
+  "CompletedPersonIds": "101,103",
+  "ParticCompletedAll": 2
+}
+```
+
+### 03 / Filter on the page
+
+The dashboard reads the saved JSON and filters it in Lava, so changing the campus is instant. One loop then sorts every row into solo, group, and spouse totals for the KPIs and charts.
+
+```liquid {1-2,4}
+{% assign rows = 'study-stats' | PersistedDataset
+               | OrderBy:'Category asc, StudyTitle asc' %}
+{% if campusId != null %}
+  {% assign rows = rows | Where:'CampusId', campusId %}
+{% endif %}
+```
+
+**Tradeoff.** Persisted datasets trade freshness for speed. Engagement with a devotional doesn't need to be real time, so a scheduled refresh was an easy call.
+
+**What I'd change now.** The query looks up a few attributes by ID, which ties it to our Rock instance. I'd look them up by key instead so another church could reuse it.
+
+</details>
