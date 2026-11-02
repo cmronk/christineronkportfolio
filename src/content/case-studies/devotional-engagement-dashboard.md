@@ -48,44 +48,52 @@ Each study is a content channel item, and each day of the study is a child item.
 
 ### 01 / Calculate once, read many times
 
-The query joins groups, members, attendance, and content items for every study anyone has ever started. That's too heavy to run on each page load, so it runs on a schedule as a persisted dataset and saves the result as JSON.
+The query joins groups, members, attendance, and content items for every study anyone has ever started, and it needs a four-minute timeout. That's far too slow for a page load, so it runs on a schedule as a persisted dataset and saves the result as JSON.
 
-```sql {12-14}
-WITH StudyStructure AS (   -- how many days each study has
-  SELECT cci.Guid AS StudyGuid, COUNT(ccia.Id) AS TotalDays
-  FROM ContentChannelItem cci
-  JOIN ContentChannelItemAssociation ccia
-    ON ccia.ContentChannelItemId = cci.Id
-  GROUP BY cci.Guid
-),
-PersonAttendance AS ( ... ),   -- days each person attended
-GroupStats AS (
-  SELECT pa.StudyGuid,
-    COUNT(DISTINCT pa.PersonId) AS TotalParticipants,
-    COUNT(DISTINCT CASE
-      WHEN pa.DaysAttended >= s.TotalDays
-      THEN pa.PersonId END) AS CompletedAll
-  FROM PersonAttendance pa
-  JOIN StudyStructure s ON s.StudyGuid = pa.StudyGuid
-  GROUP BY pa.StudyGuid
+```sql {4-5,9}
+PersonAttendance AS (
+  SELECT g.Id AS GroupId, gm.PersonId,
+    p.PrimaryCampusId AS CampusId, ...
+    COUNT(DISTINCT CASE WHEN a.DidAttend = 1
+                        THEN ao.Id END) AS DaysAttended
+  FROM [Group] g
+  JOIN GroupMember gm ON gm.GroupId = g.Id
+  LEFT JOIN AttendanceOccurrence ao ON ao.GroupId = g.Id
+  LEFT JOIN PersonAlias pa ON pa.PersonId = gm.PersonId
+  LEFT JOIN Attendance a ON a.OccurrenceId = ao.Id
+                        AND a.PersonAliasId = pa.Id
+  ...
 )
 ```
 
-### 02 / One row per group
+Attendance is recorded against a person alias, and a merged record can have several. Joining through every alias and counting distinct days means nobody is counted twice for the same day.
 
-Each row is one group taking one study. The participant IDs ride along with the totals, so the drilldown can list the actual people without a second query.
+### 02 / The IDs ride along
 
-```json {8-9}
+The rollup compares each person's days attended to the number of days in the study. It also keeps the list of people behind every number, so the drilldown can show who is in progress and who finished without a second query.
+
+```sql {3-6}
+SELECT pa.StudyGuid, pa.GroupFormat, pa.CampusId,
+  COUNT(DISTINCT pa.PersonId) AS TotalParticipants,
+  STRING_AGG(CAST(pa.PersonId AS VARCHAR(MAX)), ',') AS PersonIds,
+  STRING_AGG(CASE WHEN pa.DaysAttended >= s.TotalDays
+                  THEN CAST(pa.PersonId AS VARCHAR(MAX)) END, ',')
+    AS CompletedPersonIds
+FROM PersonAttendance pa
+JOIN StudyStructure s ON s.StudyGuid = pa.StudyGuid
+GROUP BY pa.StudyGuid, pa.GroupFormat, pa.CampusId, ...
+```
+
+Each row of the saved JSON then looks like this:
+
+```json {6-7}
 {
   "StudyTitle": "Knowing God's Will",
-  "Category": "Kingdom Living",
   "CampusId": 2,
   "Format": "Group",
   "TotalDays": 11,
-  "TotalParticipants": 3,
   "PersonIds": "101,102,103",
-  "CompletedPersonIds": "101,103",
-  "ParticCompletedAll": 2
+  "CompletedPersonIds": "101,103"
 }
 ```
 
@@ -103,6 +111,6 @@ The dashboard reads the saved JSON and filters it in Lava, so changing the campu
 
 **Tradeoff.** Persisted datasets trade freshness for speed. Engagement with a devotional doesn't need to be real time, so a scheduled refresh was an easy call.
 
-**What I'd change now.** The query looks up a few attributes by ID, which ties it to our Rock instance. I'd look them up by key instead so another church could reuse it.
+**What I'd change now.** The JSON is assembled by hand in a Lava loop. I'd switch to Rock's `ToJSON` filter so special characters in titles are handled for me, and look attributes up by key instead of ID so another church could reuse the query.
 
 </details>
