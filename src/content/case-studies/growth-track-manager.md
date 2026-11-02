@@ -51,3 +51,76 @@ Our largest campus now uses the Growth Track Manager almost daily as part of the
 The biggest change is in how staff work. They're more intentional, and they can see at a glance who is falling through the cracks. Even when someone doesn't respond or loses interest, our team is making sure that everyone who wants to serve and become a member can.
 
 Not everyone will join the Dream Team, and that's okay. What matters is that we're no longer losing or forgetting people. Every person gets followed up with, and even the ones who aren't ready yet know someone noticed. My hope is that they stick around, and that some of them start serving down the road.
+
+<details open class="under-hood">
+<summary>Under the hood</summary>
+
+One SQL query returns a row per person with every step's status already worked out. Lava turns those rows into seven columns. Each card action is a workflow link, and setting a workflow ID to 0 hides that button until it's ready. Built on Rock v19 with SQL and Lava.
+
+### 01 / Two sources of truth
+
+Older records store Growth Track in a person attribute; newer ones use a Step. Each person is counted once, and the Step wins.
+
+```sql
+WITH Combined AS (
+  SELECT p.Id AS PersonId,
+    CAST(s.CompletedDateTime AS DATE) AS GTDate,
+    1 AS SourcePriority -- [!code highlight]
+  FROM Step s ...
+  UNION ALL
+  SELECT p.Id,
+    CAST(COALESCE(av.ValueAsDateTime, -- [!code highlight]
+      TRY_CONVERT(datetime, av.Value)) AS DATE), -- [!code highlight]
+    2 -- [!code highlight]
+  FROM AttributeValue av ...
+),
+Roster AS (
+  SELECT * FROM (
+    SELECT *, ROW_NUMBER() OVER (
+      PARTITION BY PersonId ORDER BY SourcePriority) AS rn -- [!code highlight]
+    FROM Combined
+  ) d
+  WHERE rn = 1 -- [!code highlight]
+)
+```
+
+When an attribute date didn't save to `ValueAsDateTime` after the v19 upgrade, the query falls back to parsing the raw text.
+
+### 02 / Columns are rules
+
+Nobody moves cards. Each column checks every row against its own rule, so a person shows up wherever they're missing something and drops out once it's done.
+
+```liquid {2,10-11}
+{% assign bgcNeeded = true %}
+{% if row.AgeFlag == 'minor' or row.AgeFlag == 'turning18' %}
+  {% assign bgcNeeded = false %}
+{% endif %}
+{% assign bgcOK = true %}
+{% if bgcNeeded and row.BgcResultRaw == '' %}
+  {% assign bgcOK = false %}
+{% endif %}
+{% comment %} Need to Send to Coach {% endcomment %}
+{% if row.CoachRaw == '' and row.MemRaw != ''
+      and row.LeadRaw != '' and bgcOK %}
+```
+
+Minors don't need a background check. People within a few months of their 18th birthday get a grace window here, and a separate report follows up with them as they turn 18.
+
+### 03 / A safe campus filter
+
+The board opens on the viewer's campus. A campus in the URL is only used if it matches an active campus, so raw URL text never reaches the SQL.
+
+```liquid {5}
+{% assign campusId = homeCampusId %}
+{% assign requested = PageParameter.CampusId | Default:'' %}
+{% for c in campuses %}
+  {% assign cid = c.Id | AsString %}
+  {% if cid == requested %}{% assign campusId = cid %}{% endif %}
+{% endfor %}
+```
+
+**Tradeoff.** Working out each step's status in SQL keeps the Lava simple and means the KPIs and the columns can never disagree.
+
+**What I'd change now.** Each card still looks up the person and their steps on its own, and someone can appear in several columns, so the same lookups repeat. I'd pull name and phone into the main query and render every card from one shared template.
+
+</details>
