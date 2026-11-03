@@ -4,7 +4,7 @@ date: 2026-10-24
 summary: "A look at how history, technology, and human values intersect, and what we can learn from the past as we build the future."
 readTime: "5 min read"
 tags: [ai, history]
-featured: true
+featured: false
 draft: true
 art: "clock" # planet, clock, lightbulb, books, gears, sprout
 pullQuote: "We can become increasingly productive at doing things without ever stopping to ask whether those things are worth doing."

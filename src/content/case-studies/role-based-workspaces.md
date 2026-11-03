@@ -43,7 +43,7 @@ From there, I rebuilt the homepage in four parts:
 
 The redesign launched with five workspaces: Campus Pastor, Community Life, Generations, Preschool, and Marketing. Workspaces for Worship, Outreach, and Rock administration are in progress.
 
-Feedback from staff has been strongly positive, and teams have started suggesting their own additions, which tells me they see the workspaces as theirs. Questions about where to find things dropped noticeably, especially from campus pastors and the Community Life team, the two groups who use Rock most heavily day to day. Leadership now uses the homepage metrics as a regular reference point for decisions.
+Feedback from staff has been strongly positive, and teams have started suggesting their own additions, which tells me they see the workspaces as theirs. Questions about where to find things dropped noticeably, especially the Community Life team, the group who use Rock most heavily day to day. Leadership now uses the homepage metrics as a regular reference point for decisions.
 
 ## What I'd do next
 
